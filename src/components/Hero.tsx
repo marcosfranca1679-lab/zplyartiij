@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Play, Tv, Smartphone, Monitor } from "lucide-react";
 import heroImage from "@/assets/hero-iptv.jpg";
-import zplayerLogo from "@/assets/zplayer-logo.png";
+import zplayerLogo from "@/assets/zplayer-logo-new.png";
 
 const Hero = () => {
   return (
