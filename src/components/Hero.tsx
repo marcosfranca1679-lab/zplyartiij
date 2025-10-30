@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Play, Tv, Smartphone, Monitor } from "lucide-react";
 import heroImage from "@/assets/hero-iptv.jpg";
+import zplayerLogo from "@/assets/zplayer-logo.png";
 
 const Hero = () => {
   return (
@@ -24,7 +25,15 @@ const Hero = () => {
             <span className="text-sm text-foreground">Streaming de Alta Qualidade</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-1000">
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            <img 
+              src={zplayerLogo} 
+              alt="ZPLAYER Logo" 
+              className="w-auto h-32 md:h-40 mx-auto drop-shadow-2xl"
+            />
+          </div>
+
+          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-150">
             IPTV Premium
           </h1>
 
