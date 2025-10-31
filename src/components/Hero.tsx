@@ -45,6 +45,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all duration-300 text-lg px-8"
+              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Começar Agora
             </Button>
@@ -52,6 +53,7 @@ const Hero = () => {
               size="lg" 
               variant="outline" 
               className="border-primary/50 hover:bg-primary/10 text-lg px-8"
+              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Ver Planos
             </Button>
