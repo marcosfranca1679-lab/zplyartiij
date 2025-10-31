@@ -5,7 +5,7 @@ const categories = [
   {
     icon: Tv2,
     name: "Canais Abertos",
-    count: "200+",
+    count: "1000+",
     gradient: "from-blue-500 to-cyan-500"
   },
   {
