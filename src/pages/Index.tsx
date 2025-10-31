@@ -3,6 +3,7 @@ import Channels from "@/components/Channels";
 import Pricing from "@/components/Pricing";
 import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
+import ContentUpdates from "@/components/ContentUpdates";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -13,6 +14,7 @@ const Index = () => {
       <Pricing />
       <HowItWorks />
       <Testimonials />
+      <ContentUpdates />
       <Footer />
     </main>
   );
