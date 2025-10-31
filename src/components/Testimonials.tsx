@@ -71,6 +71,21 @@ const Testimonials = () => {
             </Card>
           ))}
         </div>
+
+        <div className="mt-16 max-w-4xl mx-auto">
+          <h3 className="text-2xl md:text-3xl font-bold text-center mb-8 text-foreground">
+            DICAS PARA TRAVAMENTO
+          </h3>
+          <div className="relative rounded-2xl overflow-hidden shadow-glow border border-primary/20" style={{ paddingBottom: '56.25%' }}>
+            <iframe
+              className="absolute top-0 left-0 w-full h-full"
+              src="https://www.youtube.com/embed/JL1B_W3fCiw"
+              title="DICAS PARA TRAVAMENTO"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
