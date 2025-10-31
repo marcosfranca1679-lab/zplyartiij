@@ -10,7 +10,7 @@ const plan = {
   features: [
     "Mais de 20.000 canais",
     "Qualidade 4K Ultra HD",
-    "3 telas simultâneas",
+    "1 tela simultânea",
     "Suporte 24/7",
     "Sem anúncios",
     "Filmes e séries on demand",
