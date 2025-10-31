@@ -2,6 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Play, Tv, Smartphone, Monitor } from "lucide-react";
 import heroImage from "@/assets/hero-iptv.jpg";
 import zplayerLogo from "@/assets/zplayer-logo-new.png";
+import premiereLogo from "@/assets/premiere-logo.png";
+import sportvLogo from "@/assets/sportv-logo.jpg";
+import netflixLogo from "@/assets/netflix-logo.jpg";
+import primeLogo from "@/assets/prime-logo.png";
+import discoveryLogo from "@/assets/discovery-logo.jpg";
+import globoplayLogo from "@/assets/globoplay-logo.png";
 
 const Hero = () => {
   return (
@@ -37,11 +43,21 @@ const Hero = () => {
             Z PLAYER
           </h1>
 
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
+          {/* Channel Logos */}
+          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 px-4 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
+            <img src={premiereLogo} alt="Premiere" className="h-8 md:h-10 w-auto object-contain rounded hover:scale-110 transition-transform" />
+            <img src={sportvLogo} alt="SporTV" className="h-8 md:h-10 w-auto object-contain rounded hover:scale-110 transition-transform" />
+            <img src={netflixLogo} alt="Netflix" className="h-8 md:h-10 w-auto object-contain rounded hover:scale-110 transition-transform" />
+            <img src={primeLogo} alt="Prime Video" className="h-8 md:h-10 w-auto object-contain rounded hover:scale-110 transition-transform" />
+            <img src={discoveryLogo} alt="Discovery" className="h-8 md:h-10 w-auto object-contain rounded hover:scale-110 transition-transform" />
+            <img src={globoplayLogo} alt="Globoplay" className="h-8 md:h-10 w-auto object-contain rounded hover:scale-110 transition-transform" />
+          </div>
+
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
             Milhares de canais em HD e 4K. Assista onde quiser, quando quiser.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-400">
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all duration-300 text-lg px-8"
@@ -60,7 +76,7 @@ const Hero = () => {
           </div>
 
           {/* Device Icons */}
-          <div className="flex justify-center gap-8 pt-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
+          <div className="flex justify-center gap-8 pt-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-600">
             <div className="flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
               <Tv className="w-8 h-8" />
               <span className="text-xs">Smart TV</span>
