@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { CreditCard, Download, Tv } from "lucide-react";
 
 const steps = [
@@ -60,6 +61,28 @@ const HowItWorks = () => {
               </div>
             );
           })}
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
+          <Button 
+            size="lg" 
+            className="bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all duration-300 text-lg px-8"
+            asChild
+          >
+            <a href="https://www.mediafire.com/file/gwcypcqyuxfelvw/Z+PLAYER+2.0+ARM+.apk/file" target="_blank" rel="noopener noreferrer">
+              BAIXAR APP
+            </a>
+          </Button>
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="border-primary/50 hover:bg-primary/10 text-lg px-8"
+            asChild
+          >
+            <a href="https://wa.me/5548999118524?text=ola" target="_blank" rel="noopener noreferrer">
+              SOLICITAR TESTE GRÁTIS
+            </a>
+          </Button>
         </div>
       </div>
     </section>
