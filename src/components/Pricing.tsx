@@ -63,8 +63,11 @@ const Pricing = () => {
               <Button 
                 className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-glow"
                 size="lg"
+                asChild
               >
-                Assinar Agora
+                <a href="https://wa.me/5548999118524?text=ola" target="_blank" rel="noopener noreferrer">
+                  Assinar Agora
+                </a>
               </Button>
             </CardFooter>
           </Card>
