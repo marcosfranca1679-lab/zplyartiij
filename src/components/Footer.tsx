@@ -18,7 +18,7 @@ const Footer = () => {
               <li><a href="#" className="hover:text-primary transition-colors">Início</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Planos</a></li>
               <li><a href="#" className="hover:text-primary transition-colors">Canais</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Suporte</a></li>
+              <li><a href="https://wa.me/5548999118524?text=ola" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Suporte</a></li>
             </ul>
           </div>
         </div>
