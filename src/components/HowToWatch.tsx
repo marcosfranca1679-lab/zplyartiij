@@ -34,15 +34,14 @@ const HowToWatch = () => {
           </DialogHeader>
 
           <div className="p-6 pt-2">
-            <div className="relative aspect-video w-full rounded-lg overflow-hidden shadow-2xl border border-primary/10">
-              <video
-                controls
-                className="w-full h-full object-cover"
-                poster="/placeholder.svg"
-              >
-                <source src="/videos/como-assistir.mp4" type="video/mp4" />
-                Seu navegador não suporta a reprodução de vídeos.
-              </video>
+          <div className="relative aspect-video w-full rounded-lg overflow-hidden shadow-2xl border border-primary/10">
+              <iframe
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/vZKJcEDP_gk"
+                title="Como Assistir ZPLAYER"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
             </div>
           </div>
         </DialogContent>
