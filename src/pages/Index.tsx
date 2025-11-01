@@ -5,6 +5,7 @@ import HowItWorks from "@/components/HowItWorks";
 import Testimonials from "@/components/Testimonials";
 import ContentUpdates from "@/components/ContentUpdates";
 import Footer from "@/components/Footer";
+import HowToWatch from "@/components/HowToWatch";
 
 const Index = () => {
   return (
@@ -16,6 +17,7 @@ const Index = () => {
       <Testimonials />
       <ContentUpdates />
       <Footer />
+      <HowToWatch />
     </main>
   );
 };
