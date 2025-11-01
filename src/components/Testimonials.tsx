@@ -23,6 +23,69 @@ const testimonials = [
     content: "Preço justo, muitos canais e qualidade 4K. Minha família toda está adorando!",
     rating: 5,
     avatar: "JO"
+  },
+  {
+    name: "Ana Paula Costa",
+    role: "Cliente há 3 anos",
+    content: "Excelente qualidade de imagem e som. Nunca fico sem assistir meus jogos favoritos!",
+    rating: 5,
+    avatar: "AP"
+  },
+  {
+    name: "Roberto Alves",
+    role: "Cliente há 1 ano e meio",
+    content: "Muito bom! Estabilidade ótima e variedade de canais. Vale muito a pena!",
+    rating: 5,
+    avatar: "RA"
+  },
+  {
+    name: "Patricia Lima",
+    role: "Cliente há 8 meses",
+    content: "Ótimo serviço! Só achei que poderia ter mais canais internacionais, mas no geral estou muito satisfeita.",
+    rating: 4,
+    avatar: "PL"
+  },
+  {
+    name: "Fernando Santos",
+    role: "Cliente há 2 anos",
+    content: "Uso diariamente e nunca me decepcionei. Qualidade impecável e suporte sempre disponível!",
+    rating: 5,
+    avatar: "FS"
+  },
+  {
+    name: "Juliana Mendes",
+    role: "Cliente há 5 meses",
+    content: "Muito satisfeita! A instalação foi super fácil e funciona perfeitamente em todos os dispositivos.",
+    rating: 5,
+    avatar: "JM"
+  },
+  {
+    name: "Ricardo Ferreira",
+    role: "Cliente há 1 ano",
+    content: "Bom custo-benefício. Às vezes demora um pouco para carregar, mas a qualidade compensa.",
+    rating: 4,
+    avatar: "RF"
+  },
+  {
+    name: "Camila Rodrigues",
+    role: "Cliente há 4 meses",
+    content: "Adorei! Finalmente posso assistir todas as séries que quero sem interrupções.",
+    rating: 5,
+    avatar: "CR"
+  },
+  {
+    name: "Lucas Pereira",
+    role: "Cliente há 3 anos",
+    content: "Serviço confiável e de qualidade. Recomendo para quem busca entretenimento de verdade!",
+    rating: 5,
+    avatar: "LP"
+  },
+  {
+    name: "Beatriz Souza",
+    role: "Cliente há 7 meses",
+    content: "Muito bom! A qualidade 4K é excelente. Só gostaria de mais opções de filmes clássicos.",
+    rating: 4,
+    avatar: "BS"
   }
 ];
 
