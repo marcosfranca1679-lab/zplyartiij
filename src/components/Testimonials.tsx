@@ -93,7 +93,7 @@ const testimonials = [
 const Testimonials = () => {
   return (
     <section className="py-24 px-4 relative">
-      <div className="container mx-auto max-w-4xl">
+      <div className="container mx-auto max-w-4xl space-y-8">
         <Card className="bg-card/50 backdrop-blur border-border shadow-glow">
           <CardContent className="p-8">
             <div className="text-center mb-6 space-y-2">
@@ -139,23 +139,23 @@ const Testimonials = () => {
                 ))}
               </div>
             </ScrollArea>
-
-            <div className="mt-8 pt-6 border-t border-border">
-              <h3 className="text-xl font-bold text-center mb-4 text-foreground">
-                DICAS PARA TRAVAMENTO
-              </h3>
-              <div className="relative rounded-xl overflow-hidden shadow-glow border border-primary/20" style={{ paddingBottom: '56.25%' }}>
-                <iframe
-                  className="absolute top-0 left-0 w-full h-full"
-                  src="https://www.youtube.com/embed/JL1B_W3fCiw"
-                  title="DICAS PARA TRAVAMENTO"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            </div>
           </CardContent>
         </Card>
+
+        <div>
+          <h3 className="text-2xl md:text-3xl font-bold text-center mb-6 text-foreground">
+            DICAS PARA TRAVAMENTO
+          </h3>
+          <div className="relative rounded-xl overflow-hidden shadow-glow border border-primary/20" style={{ paddingBottom: '56.25%' }}>
+            <iframe
+              className="absolute top-0 left-0 w-full h-full"
+              src="https://www.youtube.com/embed/JL1B_W3fCiw"
+              title="DICAS PARA TRAVAMENTO"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
