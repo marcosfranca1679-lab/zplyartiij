@@ -4,7 +4,7 @@ const Footer = () => {
       <div className="container mx-auto">
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <h3 className="text-2xl font-black font-zplayer tracking-wider bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Z PLAYER
             </h3>
             <p className="text-muted-foreground text-sm">

@@ -39,7 +39,7 @@ const Hero = () => {
             />
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-150">
+          <h1 className="text-5xl md:text-7xl font-black font-zplayer tracking-wider bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-150">
             Z PLAYER
           </h1>
 
