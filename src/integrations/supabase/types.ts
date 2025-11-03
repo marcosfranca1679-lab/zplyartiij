@@ -17,6 +17,7 @@ export type Database = {
       coupon_redemptions: {
         Row: {
           coupon_id: string | null
+          device_fingerprint: string | null
           id: string
           ip_address: string | null
           phone_number: string
@@ -24,6 +25,7 @@ export type Database = {
         }
         Insert: {
           coupon_id?: string | null
+          device_fingerprint?: string | null
           id?: string
           ip_address?: string | null
           phone_number: string
@@ -31,6 +33,7 @@ export type Database = {
         }
         Update: {
           coupon_id?: string | null
+          device_fingerprint?: string | null
           id?: string
           ip_address?: string | null
           phone_number?: string

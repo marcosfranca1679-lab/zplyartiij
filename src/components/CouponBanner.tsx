@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { generateDeviceFingerprint } from "@/lib/deviceFingerprint";
 import {
   Dialog,
   DialogContent,
@@ -78,6 +79,21 @@ const CouponBanner = () => {
         return;
       }
 
+      // Generate device fingerprint
+      let deviceFingerprint = "";
+      try {
+        deviceFingerprint = await generateDeviceFingerprint();
+      } catch (error) {
+        console.error("Error generating device fingerprint:", error);
+        toast({
+          title: "Erro",
+          description: "Não foi possível identificar seu dispositivo. Tente novamente.",
+          variant: "destructive",
+        });
+        setIsRedeeming(false);
+        return;
+      }
+
       // Check if phone already redeemed
       const { data: phoneRedemption } = await supabase
         .from("coupon_redemptions")
@@ -112,6 +128,23 @@ const CouponBanner = () => {
         return;
       }
 
+      // Check if device already redeemed
+      const { data: deviceRedemption } = await supabase
+        .from("coupon_redemptions")
+        .select("*")
+        .eq("device_fingerprint", deviceFingerprint)
+        .maybeSingle();
+
+      if (deviceRedemption) {
+        toast({
+          title: "Cupom já resgatado",
+          description: "Este dispositivo já resgatou um cupom.",
+          variant: "destructive",
+        });
+        setIsRedeeming(false);
+        return;
+      }
+
       // Get first available coupon
       const { data: availableCoupon } = await supabase
         .from("coupons")
@@ -137,6 +170,7 @@ const CouponBanner = () => {
           phone_number: cleanPhone,
           coupon_id: availableCoupon.id,
           ip_address: userIp,
+          device_fingerprint: deviceFingerprint,
         });
 
       if (redemptionError) throw redemptionError;
