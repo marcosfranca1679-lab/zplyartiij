@@ -12,7 +12,7 @@ import globoplayLogo from "@/assets/globoplay-logo.png";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 md:pt-20">
       {/* Background with gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background z-0">
         <div 
