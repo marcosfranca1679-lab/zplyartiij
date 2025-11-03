@@ -70,11 +70,11 @@ Deno.serve(async (req) => {
       phone_number: cleanPhone,
     });
 
-    // Check for existing redemptions using multiple criteria
+    // Check if IP already redeemed (only IP check)
     const { data: existingRedemptions, error: redemptionError } = await supabase
       .from('coupon_redemptions')
-      .select('id, phone_number, ip_address, device_fingerprint')
-      .or(`phone_number.eq.${cleanPhone},ip_address.eq.${ipAddress},device_fingerprint.eq.${deviceFingerprint}`);
+      .select('id')
+      .eq('ip_address', ipAddress);
 
     if (redemptionError) {
       console.error('Error checking redemptions:', redemptionError);
@@ -85,10 +85,9 @@ Deno.serve(async (req) => {
     }
 
     if (existingRedemptions && existingRedemptions.length > 0) {
-      console.log('Existing redemption found');
-      // Generic error message to prevent enumeration
+      console.log('IP already redeemed:', ipAddress);
       return new Response(
-        JSON.stringify({ error: 'Não foi possível resgatar o cupom. Verifique suas informações.' }),
+        JSON.stringify({ error: 'Este endereço já resgatou um cupom.' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
