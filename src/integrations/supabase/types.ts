@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      coupon_redemption_attempts: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: string
+          phone_number: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address: string
+          phone_number: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: string
+          phone_number?: string
+        }
+        Relationships: []
+      }
       coupon_redemptions: {
         Row: {
           coupon_id: string | null

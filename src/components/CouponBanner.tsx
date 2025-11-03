@@ -48,17 +48,6 @@ const CouponBanner = () => {
       return;
     }
 
-    // Validate phone number format (basic Brazilian format)
-    const cleanPhone = phoneNumber.replace(/\D/g, "");
-    if (cleanPhone.length < 10 || cleanPhone.length > 11) {
-      toast({
-        title: "Erro",
-        description: "Por favor, informe um número de celular válido.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsRedeeming(true);
 
     try {
@@ -70,13 +59,7 @@ const CouponBanner = () => {
         userIp = ipData.ip;
       } catch (error) {
         console.error("Error fetching IP:", error);
-        toast({
-          title: "Erro",
-          description: "Não foi possível verificar seu IP. Tente novamente.",
-          variant: "destructive",
-        });
-        setIsRedeeming(false);
-        return;
+        userIp = "unknown";
       }
 
       // Generate device fingerprint
@@ -85,113 +68,45 @@ const CouponBanner = () => {
         deviceFingerprint = await generateDeviceFingerprint();
       } catch (error) {
         console.error("Error generating device fingerprint:", error);
+        deviceFingerprint = "unknown";
+      }
+
+      // Call server-side Edge Function for secure redemption
+      const { data, error } = await supabase.functions.invoke('redeem-coupon', {
+        body: {
+          phoneNumber: phoneNumber,
+          ipAddress: userIp,
+          deviceFingerprint: deviceFingerprint,
+        },
+      });
+
+      if (error) {
+        console.error("Edge function error:", error);
         toast({
           title: "Erro",
-          description: "Não foi possível identificar seu dispositivo. Tente novamente.",
+          description: "Ocorreu um erro ao processar sua solicitação.",
           variant: "destructive",
         });
         setIsRedeeming(false);
         return;
       }
 
-      // Check if phone already redeemed
-      const { data: phoneRedemption } = await supabase
-        .from("coupon_redemptions")
-        .select("*")
-        .eq("phone_number", cleanPhone)
-        .maybeSingle();
-
-      if (phoneRedemption) {
+      if (data.error) {
         toast({
-          title: "Cupom já resgatado",
-          description: "Este número de celular já resgatou um cupom.",
+          title: "Erro ao resgatar cupom",
+          description: data.error,
           variant: "destructive",
         });
         setIsRedeeming(false);
         return;
       }
-
-      // Check if IP already redeemed
-      const { data: ipRedemption } = await supabase
-        .from("coupon_redemptions")
-        .select("*")
-        .eq("ip_address", userIp)
-        .maybeSingle();
-
-      if (ipRedemption) {
-        toast({
-          title: "Cupom já resgatado",
-          description: "Este endereço IP já resgatou um cupom.",
-          variant: "destructive",
-        });
-        setIsRedeeming(false);
-        return;
-      }
-
-      // Check if device already redeemed
-      const { data: deviceRedemption } = await supabase
-        .from("coupon_redemptions")
-        .select("*")
-        .eq("device_fingerprint", deviceFingerprint)
-        .maybeSingle();
-
-      if (deviceRedemption) {
-        toast({
-          title: "Cupom já resgatado",
-          description: "Este dispositivo já resgatou um cupom.",
-          variant: "destructive",
-        });
-        setIsRedeeming(false);
-        return;
-      }
-
-      // Get first available coupon
-      const { data: availableCoupon } = await supabase
-        .from("coupons")
-        .select("*")
-        .eq("is_redeemed", false)
-        .limit(1)
-        .single();
-
-      if (!availableCoupon) {
-        toast({
-          title: "Cupons esgotados",
-          description: "Desculpe, todos os cupons já foram resgatados.",
-          variant: "destructive",
-        });
-        setIsRedeeming(false);
-        return;
-      }
-
-      // Create redemption record
-      const { error: redemptionError } = await supabase
-        .from("coupon_redemptions")
-        .insert({
-          phone_number: cleanPhone,
-          coupon_id: availableCoupon.id,
-          ip_address: userIp,
-          device_fingerprint: deviceFingerprint,
-        });
-
-      if (redemptionError) throw redemptionError;
-
-      // Mark coupon as redeemed
-      const { error: updateError } = await supabase
-        .from("coupons")
-        .update({
-          is_redeemed: true,
-          redeemed_at: new Date().toISOString(),
-        })
-        .eq("id", availableCoupon.id);
-
-      if (updateError) throw updateError;
 
       // Copy code to clipboard
-      navigator.clipboard.writeText(availableCoupon.code);
+      navigator.clipboard.writeText(data.code);
 
       toast({
         title: "Cupom resgatado!",
-        description: `Seu código ${availableCoupon.code} foi copiado para a área de transferência.`,
+        description: `Seu código ${data.code} foi copiado para a área de transferência.`,
       });
 
       setRedeemOpen(false);
