@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Wifi } from "lucide-react";
 
 type SignalLevel = "excellent" | "good" | "medium";
 
@@ -53,39 +52,68 @@ const SignalQuality = () => {
     switch (signalLevel) {
       case "excellent":
         return {
-          color: "text-green-500",
-          bars: 4,
+          color: "from-green-500 to-emerald-400",
+          barColor: "bg-green-500",
           text: "Excelente",
-          bgColor: "bg-green-500/10"
+          bgColor: "bg-green-500/10",
+          borderColor: "border-green-500/30",
+          glowColor: "shadow-[0_0_20px_rgba(34,197,94,0.3)]"
         };
       case "good":
         return {
-          color: "text-primary",
-          bars: 3,
+          color: "from-blue-500 to-cyan-400",
+          barColor: "bg-blue-500",
           text: "Bom",
-          bgColor: "bg-primary/10"
+          bgColor: "bg-blue-500/10",
+          borderColor: "border-blue-500/30",
+          glowColor: "shadow-[0_0_20px_rgba(59,130,246,0.3)]"
         };
       case "medium":
         return {
-          color: "text-yellow-500",
-          bars: 2,
+          color: "from-yellow-500 to-amber-400",
+          barColor: "bg-yellow-500",
           text: "Médio",
-          bgColor: "bg-yellow-500/10"
+          bgColor: "bg-yellow-500/10",
+          borderColor: "border-yellow-500/30",
+          glowColor: "shadow-[0_0_20px_rgba(234,179,8,0.3)]"
         };
     }
   };
 
   const config = getSignalConfig();
+  const bars = signalLevel === "excellent" ? 4 : signalLevel === "good" ? 3 : 2;
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50">
-      <div className="relative">
-        <Wifi className={`h-5 w-5 ${config.color}`} strokeWidth={2.5} />
-        <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+    <div className={`flex items-center gap-3 px-4 py-3 rounded-xl backdrop-blur-md border ${config.bgColor} ${config.borderColor} ${config.glowColor} transition-all duration-500`}>
+      {/* Signal Bars */}
+      <div className="flex items-end gap-1 h-6">
+        {[1, 2, 3, 4].map((bar) => (
+          <div
+            key={bar}
+            className={`w-1.5 rounded-full transition-all duration-500 ${
+              bar <= bars ? config.barColor : "bg-muted/30"
+            }`}
+            style={{
+              height: `${bar * 25}%`,
+              animation: bar <= bars ? "pulse 2s ease-in-out infinite" : "none",
+              animationDelay: `${bar * 0.1}s`
+            }}
+          />
+        ))}
       </div>
+
+      {/* Signal Info */}
       <div className="flex flex-col">
-        <span className="text-xs font-semibold text-foreground">Sinal</span>
-        <span className={`text-xs font-medium ${config.color}`}>{config.text}</span>
+        <span className="text-xs font-medium text-muted-foreground">Qualidade</span>
+        <span className={`text-sm font-bold bg-gradient-to-r ${config.color} bg-clip-text text-transparent`}>
+          {config.text}
+        </span>
+      </div>
+
+      {/* Live Indicator */}
+      <div className="flex items-center gap-1.5 ml-1">
+        <div className={`w-2 h-2 rounded-full ${config.barColor} animate-pulse`} />
+        <span className="text-xs font-medium text-muted-foreground">LIVE</span>
       </div>
     </div>
   );
