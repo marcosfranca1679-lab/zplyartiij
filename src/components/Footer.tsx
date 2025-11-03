@@ -1,3 +1,6 @@
+import { Instagram } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
 const Footer = () => {
   return (
     <footer className="bg-secondary border-t border-border py-12 px-4">
@@ -23,8 +26,22 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          <p>&copy; 2025 Z PLAYER. Todos os direitos reservados.</p>
+        {/* Instagram Button */}
+        <div className="pt-8 border-t border-border flex flex-col items-center gap-4">
+          <a 
+            href="https://www.instagram.com/zplayer_tv?igsh=MTdlazc5YXRzcGljZw==" 
+            target="_blank" 
+            rel="noopener noreferrer"
+          >
+            <Button 
+              variant="outline" 
+              className="group bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 border-0 text-white"
+            >
+              <Instagram className="w-5 h-5 mr-2" />
+              Siga-nos no Instagram
+            </Button>
+          </a>
+          <p className="text-sm text-muted-foreground">&copy; 2025 Z PLAYER. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>
