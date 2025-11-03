@@ -216,7 +216,7 @@ const CouponBanner = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] backdrop-blur-md bg-gradient-to-r from-background/95 via-card/95 to-background/95 border-b border-primary/20 shadow-[0_4px_20px_rgba(13,203,237,0.15)]">
+    <div className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-gradient-to-r from-background/95 via-card/95 to-background/95 border-b border-primary/20 shadow-[0_4px_20px_rgba(13,203,237,0.15)]">
       <div className="container mx-auto px-3 py-2.5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 md:gap-4 flex-1 justify-center">
           <div className="flex items-center gap-2">

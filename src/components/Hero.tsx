@@ -31,7 +31,7 @@ const Hero = () => {
             <img 
               src={zplayerLogo} 
               alt="ZPLAYER Logo" 
-              className="w-auto h-32 md:h-40 mx-auto drop-shadow-2xl"
+              className="w-auto h-40 md:h-52 mx-auto drop-shadow-2xl"
             />
           </div>
 
