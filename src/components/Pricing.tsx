@@ -131,7 +131,7 @@ const Pricing = () => {
                 asChild
               >
                 <a href="https://wa.me/5548999118524?text=Quero o plano trimestral" target="_blank" rel="noopener noreferrer">
-                  Presentear Agora 🎁
+                  Comprar Agora
                 </a>
               </Button>
             </CardFooter>
