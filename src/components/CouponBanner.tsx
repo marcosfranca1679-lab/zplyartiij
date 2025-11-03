@@ -293,9 +293,17 @@ const CouponBanner = () => {
                     Termos do Cupom
                   </DialogTitle>
                   <DialogDescription className="text-left space-y-3 pt-4">
-                    <p className="text-foreground">
-                      Cupom válido apenas para a primeira compra, válido até dia <span className="font-semibold text-primary">01/12</span>
-                    </p>
+                    <div className="space-y-2">
+                      <p className="text-foreground">
+                        Cupom válido apenas para a primeira compra, válido até dia <span className="font-semibold text-primary">01/12</span>
+                      </p>
+                      <p className="text-foreground">
+                        • Válido apenas <span className="font-semibold text-primary">um cupom por pessoa</span>
+                      </p>
+                      <p className="text-foreground">
+                        • Válido apenas para <span className="font-semibold text-primary">assinatura mensal</span>
+                      </p>
+                    </div>
                     <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20">
                       <span className="text-sm font-semibold text-foreground">CUPONS RESTANTES:</span>
                       <span className="text-2xl font-bold text-primary">{availableCoupons}</span>
