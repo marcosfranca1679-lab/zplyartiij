@@ -70,24 +70,46 @@ Deno.serve(async (req) => {
       phone_number: cleanPhone,
     });
 
-    // Check if IP already redeemed (only IP check)
-    const { data: existingRedemptions, error: redemptionError } = await supabase
+    // Check if IP already redeemed
+    const { data: ipRedemptions, error: ipError } = await supabase
       .from('coupon_redemptions')
       .select('id')
       .eq('ip_address', ipAddress);
 
-    if (redemptionError) {
-      console.error('Error checking redemptions:', redemptionError);
+    if (ipError) {
+      console.error('Error checking IP redemptions:', ipError);
       return new Response(
         JSON.stringify({ error: 'Erro ao verificar resgates anteriores' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    if (existingRedemptions && existingRedemptions.length > 0) {
+    if (ipRedemptions && ipRedemptions.length > 0) {
       console.log('IP already redeemed:', ipAddress);
       return new Response(
         JSON.stringify({ error: 'Este endereço já resgatou um cupom.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check if device already redeemed
+    const { data: deviceRedemptions, error: deviceError } = await supabase
+      .from('coupon_redemptions')
+      .select('id')
+      .eq('device_fingerprint', deviceFingerprint);
+
+    if (deviceError) {
+      console.error('Error checking device redemptions:', deviceError);
+      return new Response(
+        JSON.stringify({ error: 'Erro ao verificar resgates anteriores' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (deviceRedemptions && deviceRedemptions.length > 0) {
+      console.log('Device already redeemed:', deviceFingerprint);
+      return new Response(
+        JSON.stringify({ error: 'Este dispositivo já resgatou um cupom.' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
