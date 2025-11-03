@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Play, Tv, Smartphone, Monitor } from "lucide-react";
+import { Tv, Smartphone, Monitor } from "lucide-react";
 import SignalQuality from "./SignalQuality";
 import heroImage from "@/assets/hero-iptv.jpg";
 import zplayerLogo from "@/assets/zplayer-logo-new.png";
@@ -32,11 +32,6 @@ const Hero = () => {
         </div>
 
         <div className="max-w-4xl mx-auto text-center space-y-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm">
-            <Play className="w-4 h-4 text-primary" />
-            <span className="text-sm text-foreground">Streaming de Alta Qualidade</span>
-          </div>
-
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
             <img 
               src={zplayerLogo} 
