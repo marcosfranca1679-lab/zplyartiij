@@ -61,17 +61,51 @@ const CouponBanner = () => {
     setIsRedeeming(true);
 
     try {
+      // Get user's IP address
+      let userIp = "";
+      try {
+        const ipResponse = await fetch("https://api.ipify.org?format=json");
+        const ipData = await ipResponse.json();
+        userIp = ipData.ip;
+      } catch (error) {
+        console.error("Error fetching IP:", error);
+        toast({
+          title: "Erro",
+          description: "Não foi possível verificar seu IP. Tente novamente.",
+          variant: "destructive",
+        });
+        setIsRedeeming(false);
+        return;
+      }
+
       // Check if phone already redeemed
-      const { data: existingRedemption } = await supabase
+      const { data: phoneRedemption } = await supabase
         .from("coupon_redemptions")
         .select("*")
         .eq("phone_number", cleanPhone)
-        .single();
+        .maybeSingle();
 
-      if (existingRedemption) {
+      if (phoneRedemption) {
         toast({
           title: "Cupom já resgatado",
           description: "Este número de celular já resgatou um cupom.",
+          variant: "destructive",
+        });
+        setIsRedeeming(false);
+        return;
+      }
+
+      // Check if IP already redeemed
+      const { data: ipRedemption } = await supabase
+        .from("coupon_redemptions")
+        .select("*")
+        .eq("ip_address", userIp)
+        .maybeSingle();
+
+      if (ipRedemption) {
+        toast({
+          title: "Cupom já resgatado",
+          description: "Este endereço IP já resgatou um cupom.",
           variant: "destructive",
         });
         setIsRedeeming(false);
@@ -102,6 +136,7 @@ const CouponBanner = () => {
         .insert({
           phone_number: cleanPhone,
           coupon_id: availableCoupon.id,
+          ip_address: userIp,
         });
 
       if (redemptionError) throw redemptionError;

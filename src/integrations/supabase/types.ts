@@ -18,18 +18,21 @@ export type Database = {
         Row: {
           coupon_id: string | null
           id: string
+          ip_address: string | null
           phone_number: string
           redeemed_at: string
         }
         Insert: {
           coupon_id?: string | null
           id?: string
+          ip_address?: string | null
           phone_number: string
           redeemed_at?: string
         }
         Update: {
           coupon_id?: string | null
           id?: string
+          ip_address?: string | null
           phone_number?: string
           redeemed_at?: string
         }
