@@ -95,13 +95,13 @@ const Pricing = () => {
               <div className="mt-6 space-y-2">
                 <div className="flex items-center justify-center gap-3">
                   <span className="text-2xl text-muted-foreground line-through">R$ 90,00</span>
-                  <span className="px-3 py-1 bg-destructive/20 text-destructive rounded-full text-sm font-semibold">-17%</span>
+                  <span className="px-3 py-1 bg-destructive/20 text-destructive rounded-full text-sm font-semibold">-22%</span>
                 </div>
                 <div>
-                  <span className="text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">R$ 75</span>
+                  <span className="text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">R$ 70</span>
                   <span className="text-muted-foreground">/trimestre</span>
                 </div>
-                <p className="text-sm text-primary font-medium">Economize R$ 15,00</p>
+                <p className="text-sm text-primary font-medium">Economize R$ 20,00</p>
               </div>
             </CardHeader>
 
