@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Tv, Smartphone, Monitor } from "lucide-react";
 import SignalQuality from "./SignalQuality";
 import heroImage from "@/assets/hero-iptv.jpg";
@@ -33,6 +34,13 @@ const Hero = () => {
               alt="ZPLAYER Logo" 
               className="w-auto h-40 md:h-52 mx-auto drop-shadow-2xl"
             />
+          </div>
+
+          {/* Streaming Quality Badge */}
+          <div className="flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-100">
+            <Badge variant="secondary" className="text-sm md:text-base px-4 py-2 bg-primary/20 border-primary/30 text-primary-foreground">
+              Streaming de Alta Qualidade
+            </Badge>
           </div>
 
           {/* Signal Quality Indicator */}
