@@ -18,7 +18,7 @@ const HowToWatch = () => {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
-            className="fixed bottom-6 right-6 z-50 h-16 px-8 rounded-2xl shadow-[0_0_40px_rgba(13,203,237,0.4)] bg-gradient-to-br from-primary via-primary to-accent hover:shadow-[0_0_60px_rgba(13,203,237,0.6)] animate-pulse hover:animate-none transition-all duration-500 hover:scale-110 border-2 border-primary/30 backdrop-blur-sm"
+            className="fixed bottom-24 right-6 z-50 h-16 px-8 rounded-2xl shadow-[0_0_40px_rgba(13,203,237,0.4)] bg-gradient-to-br from-primary via-primary to-accent hover:shadow-[0_0_60px_rgba(13,203,237,0.6)] animate-pulse hover:animate-none transition-all duration-500 hover:scale-110 border-2 border-primary/30 backdrop-blur-sm"
             size="lg"
           >
             <Play className="mr-2 h-6 w-6 fill-current" />
