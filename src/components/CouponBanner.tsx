@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Copy, Check, Sparkles, Info } from "lucide-react";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
   DialogContent,
@@ -15,17 +17,131 @@ const CouponBanner = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [copied, setCopied] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
+  const [redeemOpen, setRedeemOpen] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [availableCoupons, setAvailableCoupons] = useState(0);
+  const [isRedeeming, setIsRedeeming] = useState(false);
   const { toast } = useToast();
   const couponCode = "BLACKZ30%";
 
+  useEffect(() => {
+    fetchAvailableCoupons();
+  }, []);
+
+  const fetchAvailableCoupons = async () => {
+    const { count } = await supabase
+      .from("coupons")
+      .select("*", { count: "exact", head: true })
+      .eq("is_redeemed", false);
+    
+    setAvailableCoupons(count || 0);
+  };
+
+  const handleRedeem = async () => {
+    if (!phoneNumber.trim()) {
+      toast({
+        title: "Erro",
+        description: "Por favor, informe seu número de celular.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate phone number format (basic Brazilian format)
+    const cleanPhone = phoneNumber.replace(/\D/g, "");
+    if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+      toast({
+        title: "Erro",
+        description: "Por favor, informe um número de celular válido.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsRedeeming(true);
+
+    try {
+      // Check if phone already redeemed
+      const { data: existingRedemption } = await supabase
+        .from("coupon_redemptions")
+        .select("*")
+        .eq("phone_number", cleanPhone)
+        .single();
+
+      if (existingRedemption) {
+        toast({
+          title: "Cupom já resgatado",
+          description: "Este número de celular já resgatou um cupom.",
+          variant: "destructive",
+        });
+        setIsRedeeming(false);
+        return;
+      }
+
+      // Get first available coupon
+      const { data: availableCoupon } = await supabase
+        .from("coupons")
+        .select("*")
+        .eq("is_redeemed", false)
+        .limit(1)
+        .single();
+
+      if (!availableCoupon) {
+        toast({
+          title: "Cupons esgotados",
+          description: "Desculpe, todos os cupons já foram resgatados.",
+          variant: "destructive",
+        });
+        setIsRedeeming(false);
+        return;
+      }
+
+      // Create redemption record
+      const { error: redemptionError } = await supabase
+        .from("coupon_redemptions")
+        .insert({
+          phone_number: cleanPhone,
+          coupon_id: availableCoupon.id,
+        });
+
+      if (redemptionError) throw redemptionError;
+
+      // Mark coupon as redeemed
+      const { error: updateError } = await supabase
+        .from("coupons")
+        .update({
+          is_redeemed: true,
+          redeemed_at: new Date().toISOString(),
+        })
+        .eq("id", availableCoupon.id);
+
+      if (updateError) throw updateError;
+
+      // Copy code to clipboard
+      navigator.clipboard.writeText(availableCoupon.code);
+
+      toast({
+        title: "Cupom resgatado!",
+        description: `Seu código ${availableCoupon.code} foi copiado para a área de transferência.`,
+      });
+
+      setRedeemOpen(false);
+      setPhoneNumber("");
+      fetchAvailableCoupons();
+    } catch (error) {
+      console.error("Error redeeming coupon:", error);
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao resgatar o cupom. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRedeeming(false);
+    }
+  };
+
   const handleCopy = () => {
-    navigator.clipboard.writeText(couponCode);
-    setCopied(true);
-    toast({
-      title: "Cupom copiado!",
-      description: "O código foi copiado para a área de transferência.",
-    });
-    setTimeout(() => setCopied(false), 2000);
+    setRedeemOpen(true);
   };
 
   if (!isVisible) return null;
@@ -42,26 +158,53 @@ const CouponBanner = () => {
           </div>
           
           <div className="flex items-center gap-2">
-            <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-lg opacity-20 blur-sm group-hover:opacity-30 transition-opacity"></div>
-              <div className="relative flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-primary/30 hover:border-primary/50 transition-all duration-300">
-                <span className="text-xs md:text-sm font-mono font-bold text-primary tracking-wider">
-                  {couponCode}
-                </span>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-5 w-5 p-0 hover:bg-primary/10 text-primary transition-all duration-200 hover:scale-110"
-                  onClick={handleCopy}
-                >
-                  {copied ? (
-                    <Check className="h-3.5 w-3.5 text-green-500" />
-                  ) : (
-                    <Copy className="h-3.5 w-3.5" />
-                  )}
-                </Button>
-              </div>
-            </div>
+            <Dialog open={redeemOpen} onOpenChange={setRedeemOpen}>
+              <DialogTrigger asChild>
+                <div className="group relative cursor-pointer">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-lg opacity-20 blur-sm group-hover:opacity-30 transition-opacity"></div>
+                  <div className="relative flex items-center gap-2 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-primary/30 hover:border-primary/50 transition-all duration-300">
+                    <span className="text-xs md:text-sm font-mono font-bold text-primary tracking-wider">
+                      {couponCode}
+                    </span>
+                    <Copy className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                </div>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                    Resgatar Cupom
+                  </DialogTitle>
+                  <DialogDescription className="text-left space-y-4 pt-4">
+                    <div className="space-y-2">
+                      <p className="text-foreground">
+                        Informe seu número de celular para resgatar seu código exclusivo:
+                      </p>
+                      <Input
+                        type="tel"
+                        placeholder="(00) 00000-0000"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        className="w-full"
+                        disabled={isRedeeming}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20">
+                      <span className="text-sm font-semibold text-foreground">CUPONS RESTANTES:</span>
+                      <span className="text-2xl font-bold text-primary">{availableCoupons}</span>
+                    </div>
+                    <Button 
+                      onClick={handleRedeem} 
+                      className="w-full"
+                      disabled={isRedeeming}
+                    >
+                      {isRedeeming ? "Resgatando..." : "Resgatar Cupom"}
+                    </Button>
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
             
             <Dialog open={termsOpen} onOpenChange={setTermsOpen}>
               <DialogTrigger asChild>
@@ -86,7 +229,7 @@ const CouponBanner = () => {
                     </p>
                     <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20">
                       <span className="text-sm font-semibold text-foreground">CUPONS RESTANTES:</span>
-                      <span className="text-2xl font-bold text-primary">32</span>
+                      <span className="text-2xl font-bold text-primary">{availableCoupons}</span>
                     </div>
                   </DialogDescription>
                 </DialogHeader>

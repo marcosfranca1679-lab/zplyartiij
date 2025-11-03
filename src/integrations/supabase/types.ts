@@ -14,7 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      coupon_redemptions: {
+        Row: {
+          coupon_id: string | null
+          id: string
+          phone_number: string
+          redeemed_at: string
+        }
+        Insert: {
+          coupon_id?: string | null
+          id?: string
+          phone_number: string
+          redeemed_at?: string
+        }
+        Update: {
+          coupon_id?: string | null
+          id?: string
+          phone_number?: string
+          redeemed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_redemptions_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          is_redeemed: boolean
+          redeemed_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          is_redeemed?: boolean
+          redeemed_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          is_redeemed?: boolean
+          redeemed_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
