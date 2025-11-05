@@ -11,7 +11,7 @@ const OnlineUsers = () => {
         const { count, timestamp } = JSON.parse(stored);
         const minutesPassed = (Date.now() - timestamp) / (1000 * 60);
         
-        if (minutesPassed < 30) {
+        if (minutesPassed < 10) {
           return count;
         }
       }
@@ -19,8 +19,8 @@ const OnlineUsers = () => {
     };
 
     const generateRandomUserCount = (currentCount: number): number => {
-      // Variação aleatória entre -10 e +15
-      const variation = Math.floor(Math.random() * 26) - 10;
+      // Variação aleatória entre -5 e +5
+      const variation = Math.floor(Math.random() * 11) - 5;
       const newCount = currentCount + variation;
       
       // Garante que está entre 100 e 1000
@@ -49,7 +49,7 @@ const OnlineUsers = () => {
         }));
         return newCount;
       });
-    }, 30 * 60 * 1000); // 30 minutos
+    }, 10 * 60 * 1000); // 10 minutos
 
     return () => clearInterval(interval);
   }, []);
