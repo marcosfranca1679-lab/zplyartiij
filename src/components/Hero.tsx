@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tv, Smartphone, Monitor } from "lucide-react";
 import SignalQuality from "./SignalQuality";
+import OnlineUsers from "./OnlineUsers";
 import heroImage from "@/assets/hero-iptv.jpg";
 import zplayerLogo from "@/assets/zplayer-logo-new.png";
 import premiereLogo from "@/assets/premiere-logo.png";
@@ -44,8 +45,9 @@ const Hero = () => {
           </div>
 
           {/* Signal Quality Indicator */}
-          <div className="flex justify-center animate-fade-in">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 animate-fade-in">
             <SignalQuality />
+            <OnlineUsers />
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black font-zplayer tracking-wider bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-150">
