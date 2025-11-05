@@ -23,16 +23,16 @@ const OnlineUsers = () => {
       const variation = Math.floor(Math.random() * 11) - 5;
       const newCount = currentCount + variation;
       
-      // Garante que está entre 100 e 1000
-      return Math.max(100, Math.min(1000, newCount));
+      // Garante que está entre 600 e 890
+      return Math.max(600, Math.min(890, newCount));
     };
 
     const storedUsers = getStoredUsers();
     if (storedUsers) {
       setUserCount(storedUsers);
     } else {
-      // Começa com um valor aleatório entre 100 e 1000
-      const initialCount = Math.floor(Math.random() * 901) + 100;
+      // Começa com um valor aleatório entre 600 e 890
+      const initialCount = Math.floor(Math.random() * 291) + 600;
       setUserCount(initialCount);
       localStorage.setItem("onlineUsers", JSON.stringify({
         count: initialCount,
