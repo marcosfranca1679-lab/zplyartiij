@@ -12,7 +12,11 @@ serve(async (req) => {
   }
 
   try {
-    const { planType, couponCode, discountPercent } = await req.json();
+    const body = await req.json();
+    const { planType, couponCode, discountPercent } = body;
+    
+    console.log('Received payment request:', { planType, couponCode, discountPercent, fullBody: body });
+    
     const accessToken = Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN');
 
     if (!accessToken) {
