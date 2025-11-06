@@ -49,12 +49,23 @@ const Pricing = () => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
+  const [whatsapp, setWhatsapp] = useState("");
+  const [email, setEmail] = useState("");
 
   const handlePayment = async (planType: 'monthly' | 'quarterly') => {
+    if (!whatsapp || !email) {
+      toast.error("Por favor, preencha WhatsApp e Email");
+      return;
+    }
+
     setLoadingPlan(planType);
     
     try {
-      const requestBody: any = { planType };
+      const requestBody: any = { 
+        planType,
+        whatsapp: whatsapp.trim(),
+        email: email.trim()
+      };
       
       // Incluir cupom no request (mesmo que o usuário não tenha clicado em "Aplicar")
       if (planType === 'monthly' && couponCode.trim()) {
@@ -90,6 +101,8 @@ const Pricing = () => {
     setCheckoutOpen(true);
     setCouponCode("");
     setAppliedCoupon(null);
+    setWhatsapp("");
+    setEmail("");
   };
 
   const validateCoupon = async () => {
@@ -288,6 +301,27 @@ const Pricing = () => {
 
             {selectedPlan && (
               <div className="space-y-4 py-4">
+                {/* Contact Information */}
+                <div className="bg-muted/30 rounded-lg p-4 space-y-3">
+                  <div className="text-sm font-medium mb-2">
+                    Informações de Contato
+                  </div>
+                  <div className="space-y-2">
+                    <Input
+                      placeholder="WhatsApp (ex: 11999999999)"
+                      value={whatsapp}
+                      onChange={(e) => setWhatsapp(e.target.value)}
+                      type="tel"
+                    />
+                    <Input
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      type="email"
+                    />
+                  </div>
+                </div>
+
                 {/* Cupom Section - Only for monthly plan */}
                 {selectedPlan === 'monthly' && !appliedCoupon && (
                   <div className="bg-muted/30 rounded-lg p-4 space-y-3">

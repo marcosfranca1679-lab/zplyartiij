@@ -27,8 +27,16 @@ const PaymentSuccess = () => {
           <p className="text-xl text-muted-foreground">
             Obrigado pela sua compra!
           </p>
-          <p className="text-foreground">
-            Seu acesso ao Z Player foi ativado com sucesso. Em breve você receberá um email com as instruções de acesso.
+          <div className="bg-accent/20 border border-accent rounded-lg p-6 space-y-3">
+            <p className="text-foreground font-semibold text-lg">
+              Próximo Passo Importante:
+            </p>
+            <p className="text-foreground">
+              Acesse nosso site e clique no botão <span className="font-bold text-primary">"Liberar Acesso"</span> para que seu usuário e senha sejam gerados automaticamente.
+            </p>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Em breve você receberá um email com as instruções de acesso.
           </p>
         </div>
 

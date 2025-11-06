@@ -14,9 +14,9 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { planType, couponCode, discountPercent } = body;
+    const { planType, couponCode, discountPercent, whatsapp, email } = body;
     
-    console.log('Received payment request:', { planType, couponCode, discountPercent, fullBody: body });
+    console.log('Received payment request:', { planType, couponCode, discountPercent, whatsapp, email, fullBody: body });
     
     const accessToken = Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN');
 
@@ -109,6 +109,12 @@ serve(async (req) => {
           currency_id: 'BRL'
         }
       ],
+      payer: {
+        email: email,
+        phone: {
+          number: whatsapp
+        }
+      },
       back_urls: {
         success: `${req.headers.get('origin')}/pagamento/sucesso`,
         failure: `${req.headers.get('origin')}/pagamento/falha`,
@@ -120,7 +126,12 @@ serve(async (req) => {
         default_installments: 1
       },
       statement_descriptor: 'ZPLAYER',
-      external_reference: `${planType}_${Date.now()}`
+      external_reference: `${planType}_${Date.now()}`,
+      metadata: {
+        whatsapp: whatsapp,
+        email: email,
+        coupon_code: normalizedCoupon || ''
+      }
     };
 
     const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
