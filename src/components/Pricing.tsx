@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Check, Loader2, CreditCard } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -21,8 +22,29 @@ const plan = {
   ]
 };
 
+const plans = {
+  monthly: {
+    name: "Plano Mensal",
+    price: "R$ 29,99",
+    period: "/mês",
+    total: "R$ 29,99",
+    description: "Acesso completo por 1 mês",
+  },
+  quarterly: {
+    name: "Plano Trimestral",
+    price: "R$ 23,33",
+    period: "/mês",
+    total: "R$ 70,00",
+    originalTotal: "R$ 90,00",
+    description: "Acesso completo por 3 meses",
+    savings: "Economize R$ 20,00"
+  }
+};
+
 const Pricing = () => {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'quarterly' | null>(null);
 
   const handlePayment = async (planType: 'monthly' | 'quarterly') => {
     setLoadingPlan(planType);
@@ -43,6 +65,17 @@ const Pricing = () => {
       console.error('Erro ao criar pagamento:', error);
       toast.error('Erro ao processar pagamento. Tente novamente.');
       setLoadingPlan(null);
+    }
+  };
+
+  const openCheckout = (planType: 'monthly' | 'quarterly') => {
+    setSelectedPlan(planType);
+    setCheckoutOpen(true);
+  };
+
+  const confirmCheckout = () => {
+    if (selectedPlan) {
+      handlePayment(selectedPlan);
     }
   };
 
@@ -91,17 +124,10 @@ const Pricing = () => {
               <Button 
                 className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-glow"
                 size="lg"
-                onClick={() => handlePayment('monthly')}
+                onClick={() => openCheckout('monthly')}
                 disabled={loadingPlan !== null}
               >
-                {loadingPlan === 'monthly' ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processando...
-                  </>
-                ) : (
-                  'Assinar Agora'
-                )}
+                Assinar Agora
               </Button>
             </CardFooter>
           </Card>
@@ -161,21 +187,105 @@ const Pricing = () => {
               <Button 
                 className="w-full bg-gradient-to-r from-accent to-primary hover:shadow-glow text-background font-semibold"
                 size="lg"
-                onClick={() => handlePayment('quarterly')}
+                onClick={() => openCheckout('quarterly')}
                 disabled={loadingPlan !== null}
               >
-                {loadingPlan === 'quarterly' ? (
+                Comprar Agora
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+
+        {/* Checkout Dialog */}
+        <Dialog open={checkoutOpen} onOpenChange={setCheckoutOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-primary" />
+                Confirmar Assinatura
+              </DialogTitle>
+              <DialogDescription>
+                Revise os detalhes do seu plano antes de continuar
+              </DialogDescription>
+            </DialogHeader>
+
+            {selectedPlan && (
+              <div className="space-y-4 py-4">
+                <div className="bg-secondary/50 rounded-lg p-4 space-y-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-semibold text-lg">{plans[selectedPlan].name}</h3>
+                      <p className="text-sm text-muted-foreground">{plans[selectedPlan].description}</p>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-border pt-3 space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Valor mensal:</span>
+                      <span className="font-medium">{plans[selectedPlan].price}</span>
+                    </div>
+                    
+                    {selectedPlan === 'quarterly' && plans[selectedPlan].originalTotal && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Valor original:</span>
+                        <span className="line-through text-muted-foreground">{plans[selectedPlan].originalTotal}</span>
+                      </div>
+                    )}
+
+                    <div className="flex justify-between items-center pt-2 border-t border-border">
+                      <span className="font-semibold">Total:</span>
+                      <span className="text-2xl font-bold text-primary">{plans[selectedPlan].total}</span>
+                    </div>
+
+                    {selectedPlan === 'quarterly' && plans[selectedPlan].savings && (
+                      <div className="text-center">
+                        <span className="inline-block px-3 py-1 bg-accent/20 text-accent rounded-full text-sm font-medium">
+                          {plans[selectedPlan].savings}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-muted/50 rounded-lg p-3 text-sm text-muted-foreground">
+                  <p className="flex items-start gap-2">
+                    <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    Pagamento processado de forma segura pelo Mercado Pago
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <DialogFooter className="flex-col sm:flex-col gap-2">
+              <Button
+                className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-glow"
+                size="lg"
+                onClick={confirmCheckout}
+                disabled={loadingPlan !== null}
+              >
+                {loadingPlan ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Processando...
                   </>
                 ) : (
-                  'Comprar Agora'
+                  <>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Ir para Pagamento
+                  </>
                 )}
               </Button>
-            </CardFooter>
-          </Card>
-        </div>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setCheckoutOpen(false)}
+                disabled={loadingPlan !== null}
+              >
+                Cancelar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   );
