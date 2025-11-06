@@ -56,9 +56,12 @@ const Pricing = () => {
     try {
       const requestBody: any = { planType };
       
-      // Se houver cupom aplicado, incluir no request
+      // Incluir cupom no request (mesmo que o usuário não tenha clicado em "Aplicar")
+      if (planType === 'monthly' && couponCode.trim()) {
+        requestBody.couponCode = couponCode.trim().toUpperCase();
+      }
+      // Se o cupom já foi validado, enviar também o desconto esperado (apenas informativo)
       if (appliedCoupon && planType === 'monthly') {
-        requestBody.couponCode = appliedCoupon.code?.toString().trim();
         requestBody.discountPercent = Number(appliedCoupon.discount);
       }
 

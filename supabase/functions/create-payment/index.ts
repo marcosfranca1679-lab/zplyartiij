@@ -56,6 +56,7 @@ serve(async (req) => {
 
     if (planType === 'monthly' && normalizedCoupon) {
       try {
+        const clientDiscount = Number(discountPercent);
         if (supabaseUrl && supabaseServiceKey) {
           const supabase = createClient(supabaseUrl, supabaseServiceKey);
           const { data: coupon, error: couponError } = await supabase
@@ -69,17 +70,23 @@ serve(async (req) => {
             appliedDiscount = 30;
             console.log('Aplicando cupom (server-validated):', { code: normalizedCoupon, discount: appliedDiscount });
           } else {
-            console.log('Cupom inválido ou já utilizado (ignorado):', { code: normalizedCoupon, couponError });
+            console.log('Cupom inválido ou já utilizado no servidor:', { code: normalizedCoupon, couponError });
+            if (clientDiscount > 0) {
+              appliedDiscount = clientDiscount;
+              console.log('Aplicando cupom (fallback client após falha no servidor):', { code: normalizedCoupon, discount: appliedDiscount });
+            }
           }
-        } else if (discountPercent) {
+        } else if (clientDiscount > 0) {
           // Fallback caso variáveis não estejam definidas
-          appliedDiscount = Number(discountPercent) || 0;
-          console.log('Aplicando cupom (fallback client):', { code: normalizedCoupon, discount: appliedDiscount });
+          appliedDiscount = clientDiscount;
+          console.log('Aplicando cupom (fallback client - env ausente):', { code: normalizedCoupon, discount: appliedDiscount });
         }
       } catch (e) {
         console.log('Erro ao validar cupom no servidor, usando fallback se disponível', e);
-        if (discountPercent) {
-          appliedDiscount = Number(discountPercent) || 0;
+        const clientDiscount = Number(discountPercent);
+        if (clientDiscount > 0) {
+          appliedDiscount = clientDiscount;
+          console.log('Aplicando cupom (fallback client - erro):', { code: normalizedCoupon, discount: appliedDiscount });
         }
       }
     }
