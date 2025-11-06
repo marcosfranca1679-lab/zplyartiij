@@ -53,8 +53,17 @@ const Pricing = () => {
   const [email, setEmail] = useState("");
 
   const handlePayment = async (planType: 'monthly' | 'quarterly') => {
-    if (!whatsapp || !email) {
-      toast.error("Por favor, preencha WhatsApp e Email");
+    // Validação de WhatsApp (apenas números, mínimo 10 dígitos)
+    const whatsappClean = whatsapp.replace(/\D/g, '');
+    if (!whatsappClean || whatsappClean.length < 10 || whatsappClean.length > 11) {
+      toast.error("WhatsApp inválido. Use apenas números (DDD + número)");
+      return;
+    }
+
+    // Validação de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      toast.error("Email inválido");
       return;
     }
 
@@ -63,8 +72,8 @@ const Pricing = () => {
     try {
       const requestBody: any = { 
         planType,
-        whatsapp: whatsapp.trim(),
-        email: email.trim()
+        whatsapp: whatsapp.replace(/\D/g, '').trim(),
+        email: email.trim().toLowerCase()
       };
       
       // Incluir cupom no request (mesmo que o usuário não tenha clicado em "Aplicar")
@@ -310,14 +319,17 @@ const Pricing = () => {
                     <Input
                       placeholder="WhatsApp (ex: 11999999999)"
                       value={whatsapp}
-                      onChange={(e) => setWhatsapp(e.target.value)}
+                      onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, ''))}
                       type="tel"
+                      maxLength={11}
+                      required
                     />
                     <Input
-                      placeholder="Email"
+                      placeholder="Email (ex: seuemail@exemplo.com)"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       type="email"
+                      required
                     />
                   </div>
                 </div>
