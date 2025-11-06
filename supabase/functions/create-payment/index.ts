@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.78.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,6 +24,10 @@ serve(async (req) => {
       throw new Error('Mercado Pago access token não configurado');
     }
 
+    // Variáveis do backend para validação de cupom no servidor
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
     // Define os dados do plano
     const plans = {
       monthly: {
@@ -42,14 +47,46 @@ serve(async (req) => {
       throw new Error('Plano inválido');
     }
 
-    // Aplicar desconto se houver cupom
+    // Aplicar desconto se houver cupom (validação no servidor)
     let finalPrice = plan.price;
     let title = plan.title;
     
-    if (couponCode && discountPercent && planType === 'monthly') {
-      finalPrice = plan.price * (1 - discountPercent / 100);
-      title = `${plan.title} - Cupom ${couponCode} (${discountPercent}% OFF)`;
-      console.log('Aplicando cupom:', { code: couponCode, discount: discountPercent, finalPrice });
+    let appliedDiscount = 0;
+    const normalizedCoupon = typeof couponCode === 'string' ? couponCode.toUpperCase().trim() : null;
+
+    if (planType === 'monthly' && normalizedCoupon) {
+      try {
+        if (supabaseUrl && supabaseServiceKey) {
+          const supabase = createClient(supabaseUrl, supabaseServiceKey);
+          const { data: coupon, error: couponError } = await supabase
+            .from('coupons')
+            .select('code,is_redeemed')
+            .eq('code', normalizedCoupon)
+            .eq('is_redeemed', false)
+            .single();
+
+          if (!couponError && coupon) {
+            appliedDiscount = 30;
+            console.log('Aplicando cupom (server-validated):', { code: normalizedCoupon, discount: appliedDiscount });
+          } else {
+            console.log('Cupom inválido ou já utilizado (ignorado):', { code: normalizedCoupon, couponError });
+          }
+        } else if (discountPercent) {
+          // Fallback caso variáveis não estejam definidas
+          appliedDiscount = Number(discountPercent) || 0;
+          console.log('Aplicando cupom (fallback client):', { code: normalizedCoupon, discount: appliedDiscount });
+        }
+      } catch (e) {
+        console.log('Erro ao validar cupom no servidor, usando fallback se disponível', e);
+        if (discountPercent) {
+          appliedDiscount = Number(discountPercent) || 0;
+        }
+      }
+    }
+
+    if (appliedDiscount > 0) {
+      finalPrice = Math.round((plan.price * (1 - appliedDiscount / 100)) * 100) / 100;
+      title = `${plan.title} - Cupom ${normalizedCoupon} (${appliedDiscount}% OFF)`;
     }
 
     console.log('Criando preferência para:', title);
