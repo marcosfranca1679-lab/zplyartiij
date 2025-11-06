@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const plan = {
   name: "Completo",
@@ -19,6 +22,30 @@ const plan = {
 };
 
 const Pricing = () => {
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handlePayment = async (planType: 'monthly' | 'quarterly') => {
+    setLoadingPlan(planType);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('create-payment', {
+        body: { planType }
+      });
+
+      if (error) throw error;
+
+      if (data?.initPoint) {
+        window.location.href = data.initPoint;
+      } else {
+        throw new Error('URL de pagamento não recebida');
+      }
+    } catch (error) {
+      console.error('Erro ao criar pagamento:', error);
+      toast.error('Erro ao processar pagamento. Tente novamente.');
+      setLoadingPlan(null);
+    }
+  };
+
   return (
     <section id="pricing" className="py-24 px-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/30 to-background" />
@@ -64,11 +91,17 @@ const Pricing = () => {
               <Button 
                 className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-glow"
                 size="lg"
-                asChild
+                onClick={() => handlePayment('monthly')}
+                disabled={loadingPlan !== null}
               >
-                <a href="https://wa.me/5548999118524?text=ola" target="_blank" rel="noopener noreferrer">
-                  Assinar Agora
-                </a>
+                {loadingPlan === 'monthly' ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processando...
+                  </>
+                ) : (
+                  'Assinar Agora'
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -128,11 +161,17 @@ const Pricing = () => {
               <Button 
                 className="w-full bg-gradient-to-r from-accent to-primary hover:shadow-glow text-background font-semibold"
                 size="lg"
-                asChild
+                onClick={() => handlePayment('quarterly')}
+                disabled={loadingPlan !== null}
               >
-                <a href="https://wa.me/5548999118524?text=Quero o plano trimestral" target="_blank" rel="noopener noreferrer">
-                  Comprar Agora
-                </a>
+                {loadingPlan === 'quarterly' ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processando...
+                  </>
+                ) : (
+                  'Comprar Agora'
+                )}
               </Button>
             </CardFooter>
           </Card>
