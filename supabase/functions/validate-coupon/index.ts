@@ -54,8 +54,8 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Cupom válido - retornar desconto (assumindo 50% de desconto)
-    const discountPercent = 50;
+    // Cupom válido - retornar desconto de 30%
+    const discountPercent = 30;
     
     console.log('Coupon valid:', { code: coupon.code, discount: discountPercent });
 
