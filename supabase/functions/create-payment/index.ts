@@ -152,6 +152,30 @@ serve(async (req) => {
     const preference = await response.json();
     console.log('Preferência criada:', preference.id);
 
+    // Salvar informações do pagamento no banco de dados
+    if (supabaseUrl && supabaseServiceKey) {
+      const supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
+      const { error: dbError } = await supabaseClient
+        .from('payments')
+        .insert({
+          whatsapp,
+          email,
+          plan_type: planType,
+          coupon_code: normalizedCoupon || null,
+          discount_percent: appliedDiscount,
+          final_price: finalPrice,
+          preference_id: preference.id,
+          payment_status: 'pending'
+        });
+
+      if (dbError) {
+        console.error('Erro ao salvar pagamento no banco:', dbError);
+        // Continuar mesmo com erro no banco, pois o pagamento foi criado no Mercado Pago
+      } else {
+        console.log('Pagamento salvo no banco com sucesso');
+      }
+    }
+
     return new Response(
       JSON.stringify({ 
         preferenceId: preference.id,

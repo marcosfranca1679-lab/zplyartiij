@@ -94,6 +94,45 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          coupon_code: string | null
+          created_at: string
+          discount_percent: number | null
+          email: string
+          final_price: number
+          id: string
+          payment_status: string | null
+          plan_type: string
+          preference_id: string
+          whatsapp: string
+        }
+        Insert: {
+          coupon_code?: string | null
+          created_at?: string
+          discount_percent?: number | null
+          email: string
+          final_price: number
+          id?: string
+          payment_status?: string | null
+          plan_type: string
+          preference_id: string
+          whatsapp: string
+        }
+        Update: {
+          coupon_code?: string | null
+          created_at?: string
+          discount_percent?: number | null
+          email?: string
+          final_price?: number
+          id?: string
+          payment_status?: string | null
+          plan_type?: string
+          preference_id?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
