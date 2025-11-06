@@ -58,9 +58,11 @@ const Pricing = () => {
       
       // Se houver cupom aplicado, incluir no request
       if (appliedCoupon && planType === 'monthly') {
-        requestBody.couponCode = appliedCoupon.code;
-        requestBody.discountPercent = appliedCoupon.discount;
+        requestBody.couponCode = appliedCoupon.code?.toString().trim();
+        requestBody.discountPercent = Number(appliedCoupon.discount);
       }
+
+      console.log('[Checkout] Sending payment request:', requestBody);
 
       const { data, error } = await supabase.functions.invoke('create-payment', {
         body: requestBody
