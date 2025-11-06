@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { planType } = await req.json();
+    const { planType, couponCode, discountPercent } = await req.json();
     const accessToken = Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN');
 
     if (!accessToken) {
@@ -38,16 +38,26 @@ serve(async (req) => {
       throw new Error('Plano inválido');
     }
 
-    console.log('Criando preferência para:', plan.title);
+    // Aplicar desconto se houver cupom
+    let finalPrice = plan.price;
+    let title = plan.title;
+    
+    if (couponCode && discountPercent && planType === 'monthly') {
+      finalPrice = plan.price * (1 - discountPercent / 100);
+      title = `${plan.title} - Cupom ${couponCode} (${discountPercent}% OFF)`;
+      console.log('Aplicando cupom:', { code: couponCode, discount: discountPercent, finalPrice });
+    }
+
+    console.log('Criando preferência para:', title);
 
     // Cria a preferência de pagamento no Mercado Pago
     const preferenceData = {
       items: [
         {
-          title: plan.title,
+          title: title,
           description: plan.description,
           quantity: 1,
-          unit_price: plan.price,
+          unit_price: finalPrice,
           currency_id: 'BRL'
         }
       ],

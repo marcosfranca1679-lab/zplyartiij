@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Check, Loader2, CreditCard } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Check, Loader2, CreditCard, Tag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -45,13 +46,24 @@ const Pricing = () => {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'quarterly' | null>(null);
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null);
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
 
   const handlePayment = async (planType: 'monthly' | 'quarterly') => {
     setLoadingPlan(planType);
     
     try {
+      const requestBody: any = { planType };
+      
+      // Se houver cupom aplicado, incluir no request
+      if (appliedCoupon && planType === 'monthly') {
+        requestBody.couponCode = appliedCoupon.code;
+        requestBody.discountPercent = appliedCoupon.discount;
+      }
+
       const { data, error } = await supabase.functions.invoke('create-payment', {
-        body: { planType }
+        body: requestBody
       });
 
       if (error) throw error;
@@ -71,6 +83,66 @@ const Pricing = () => {
   const openCheckout = (planType: 'monthly' | 'quarterly') => {
     setSelectedPlan(planType);
     setCheckoutOpen(true);
+    setCouponCode("");
+    setAppliedCoupon(null);
+  };
+
+  const validateCoupon = async () => {
+    if (!couponCode.trim()) {
+      toast.error("Digite um código de cupom");
+      return;
+    }
+
+    if (selectedPlan !== 'monthly') {
+      toast.error("Cupons só podem ser usados no plano mensal");
+      return;
+    }
+
+    setValidatingCoupon(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('validate-coupon', {
+        body: { 
+          code: couponCode.trim().toUpperCase(),
+          planType: selectedPlan
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.valid) {
+        setAppliedCoupon({
+          code: data.code,
+          discount: data.discountPercent
+        });
+        toast.success(data.message || "Cupom aplicado com sucesso!");
+      } else {
+        toast.error(data?.error || "Cupom inválido");
+      }
+    } catch (error) {
+      console.error('Erro ao validar cupom:', error);
+      toast.error("Erro ao validar cupom");
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+  };
+
+  const calculateTotal = () => {
+    if (!selectedPlan) return "R$ 0,00";
+    
+    const basePrice = selectedPlan === 'monthly' ? 29.99 : 70.00;
+    
+    if (appliedCoupon && selectedPlan === 'monthly') {
+      const discountedPrice = basePrice * (1 - appliedCoupon.discount / 100);
+      return `R$ ${discountedPrice.toFixed(2).replace('.', ',')}`;
+    }
+    
+    return selectedPlan === 'monthly' ? "R$ 29,99" : "R$ 70,00";
   };
 
   const confirmCheckout = () => {
@@ -211,6 +283,59 @@ const Pricing = () => {
 
             {selectedPlan && (
               <div className="space-y-4 py-4">
+                {/* Cupom Section - Only for monthly plan */}
+                {selectedPlan === 'monthly' && !appliedCoupon && (
+                  <div className="bg-muted/30 rounded-lg p-4 space-y-3">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <Tag className="w-4 h-4 text-primary" />
+                      <span>Tem um cupom de desconto?</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Digite o código"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                        className="flex-1"
+                        disabled={validatingCoupon}
+                      />
+                      <Button
+                        onClick={validateCoupon}
+                        disabled={validatingCoupon || !couponCode.trim()}
+                        variant="outline"
+                      >
+                        {validatingCoupon ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          "Aplicar"
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Applied Coupon Display */}
+                {appliedCoupon && (
+                  <div className="bg-accent/20 border border-accent rounded-lg p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Tag className="w-4 h-4 text-accent" />
+                        <span className="font-medium text-sm">Cupom {appliedCoupon.code}</span>
+                        <span className="text-xs bg-accent text-background px-2 py-0.5 rounded-full">
+                          -{appliedCoupon.discount}%
+                        </span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={removeCoupon}
+                        className="h-6 px-2 text-xs"
+                      >
+                        Remover
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="bg-secondary/50 rounded-lg p-4 space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
@@ -221,10 +346,21 @@ const Pricing = () => {
 
                   <div className="border-t border-border pt-3 space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Valor mensal:</span>
-                      <span className="font-medium">{plans[selectedPlan].price}</span>
+                      <span className="text-muted-foreground">Valor base:</span>
+                      <span className={appliedCoupon ? "line-through text-muted-foreground" : "font-medium"}>
+                        {plans[selectedPlan].price}
+                      </span>
                     </div>
                     
+                    {appliedCoupon && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Desconto ({appliedCoupon.discount}%):</span>
+                        <span className="text-accent font-medium">
+                          -R$ {(29.99 * appliedCoupon.discount / 100).toFixed(2).replace('.', ',')}
+                        </span>
+                      </div>
+                    )}
+
                     {selectedPlan === 'quarterly' && plans[selectedPlan].originalTotal && (
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Valor original:</span>
@@ -234,7 +370,7 @@ const Pricing = () => {
 
                     <div className="flex justify-between items-center pt-2 border-t border-border">
                       <span className="font-semibold">Total:</span>
-                      <span className="text-2xl font-bold text-primary">{plans[selectedPlan].total}</span>
+                      <span className="text-2xl font-bold text-primary">{calculateTotal()}</span>
                     </div>
 
                     {selectedPlan === 'quarterly' && plans[selectedPlan].savings && (
