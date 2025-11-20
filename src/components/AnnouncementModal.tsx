@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
 const AnnouncementModal = () => {
@@ -18,22 +19,22 @@ const AnnouncementModal = () => {
       
       {/* Caixa centralizada */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-[600px] bg-background border-border shadow-2xl relative">
+        <Card className="w-full max-w-[450px] bg-background border-border shadow-2xl relative animate-scale-in">
           <button
             onClick={() => setOpen(false)}
             className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
             <span className="sr-only">Fechar</span>
           </button>
           
           <CardHeader>
-            <CardTitle className="text-xl font-semibold text-foreground pr-8">
+            <CardTitle className="text-lg font-semibold text-foreground pr-8">
               Atualização Importante sobre o Player M3U8
             </CardTitle>
           </CardHeader>
           
-          <CardContent className="space-y-4 text-foreground/90">
+          <CardContent className="space-y-3 text-sm text-foreground/90">
             <p>Prezados,</p>
             <p>
               Informamos que em breve estaremos removendo o player M3U8 do servidor. 
@@ -58,6 +59,15 @@ const AnnouncementModal = () => {
             </p>
             <p className="font-semibold">Atenciosamente.</p>
           </CardContent>
+          
+          <CardFooter>
+            <Button 
+              onClick={() => setOpen(false)} 
+              className="w-full"
+            >
+              Fechar
+            </Button>
+          </CardFooter>
         </Card>
       </div>
     </>
