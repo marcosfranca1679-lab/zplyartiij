@@ -6,14 +6,12 @@ import Testimonials from "@/components/Testimonials";
 import ContentUpdates from "@/components/ContentUpdates";
 import Footer from "@/components/Footer";
 import HowToWatch from "@/components/HowToWatch";
-import CouponBanner from "@/components/CouponBanner";
 import AnnouncementModal from "@/components/AnnouncementModal";
 
 const Index = () => {
   return (
     <main className="min-h-screen bg-background">
       <AnnouncementModal />
-      <CouponBanner />
       <Hero />
       <Channels />
       <Pricing />
