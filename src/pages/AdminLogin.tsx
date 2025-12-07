@@ -12,6 +12,7 @@ const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -77,6 +78,47 @@ const AdminLogin = () => {
     }
   };
 
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/admin`,
+        },
+      });
+
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Erro no cadastro",
+          description: error.message,
+        });
+        return;
+      }
+
+      if (data.user) {
+        toast({
+          title: "Conta criada!",
+          description: "Agora aguarde o administrador liberar seu acesso.",
+        });
+        setIsSignUp(false);
+      }
+    } catch (error) {
+      console.error("SignUp error:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Ocorreu um erro ao criar conta",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md border-border/50 bg-card/80 backdrop-blur-sm">
@@ -84,13 +126,15 @@ const AdminLogin = () => {
           <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
             <Shield className="w-8 h-8 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-bold">Área Administrativa</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            {isSignUp ? "Criar Conta Admin" : "Área Administrativa"}
+          </CardTitle>
           <CardDescription>
-            Acesso restrito para administradores
+            {isSignUp ? "Crie sua conta de administrador" : "Acesso restrito para administradores"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -118,6 +162,7 @@ const AdminLogin = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"
                   required
+                  minLength={6}
                 />
               </div>
             </div>
@@ -126,9 +171,18 @@ const AdminLogin = () => {
               className="w-full"
               disabled={loading}
             >
-              {loading ? "Entrando..." : "Entrar"}
+              {loading ? (isSignUp ? "Criando..." : "Entrando...") : (isSignUp ? "Criar Conta" : "Entrar")}
             </Button>
           </form>
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-sm text-primary hover:underline"
+            >
+              {isSignUp ? "Já tem conta? Fazer login" : "Criar conta de admin"}
+            </button>
+          </div>
         </CardContent>
       </Card>
     </main>
