@@ -24,24 +24,13 @@ Deno.serve(async (req) => {
 
     console.log('Validating coupon:', { code, planType });
 
-    // Verificar se o cupom só pode ser usado no plano mensal
-    if (planType !== 'monthly') {
-      return new Response(
-        JSON.stringify({ 
-          valid: false, 
-          error: 'Este cupom só pode ser usado no plano mensal' 
-        }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
     // Buscar cupom pelo código
     const { data: coupon, error: couponError } = await supabase
       .from('coupons')
       .select('*')
       .eq('code', code.toUpperCase().trim())
       .eq('is_redeemed', false)
-      .single();
+      .maybeSingle();
 
     if (couponError || !coupon) {
       console.log('Coupon not found or already used:', code);
@@ -54,8 +43,36 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Cupom válido - retornar desconto de 30%
-    const discountPercent = 30;
+    // Verificar validade do cupom
+    if (coupon.valid_until) {
+      const validUntil = new Date(coupon.valid_until);
+      if (validUntil < new Date()) {
+        console.log('Coupon expired:', code);
+        return new Response(
+          JSON.stringify({ 
+            valid: false, 
+            error: 'Este cupom expirou' 
+          }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
+    // Verificar se o cupom é válido para o plano selecionado
+    if (coupon.valid_for_plan && coupon.valid_for_plan !== 'all' && coupon.valid_for_plan !== planType) {
+      const planLabel = coupon.valid_for_plan === 'monthly' ? 'mensal' : 'trimestral';
+      console.log('Coupon not valid for plan:', { code, planType, validFor: coupon.valid_for_plan });
+      return new Response(
+        JSON.stringify({ 
+          valid: false, 
+          error: `Este cupom só pode ser usado no plano ${planLabel}` 
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Cupom válido - retornar desconto do cupom
+    const discountPercent = coupon.discount_percent || 30;
     
     console.log('Coupon valid:', { code: coupon.code, discount: discountPercent });
 
