@@ -474,6 +474,16 @@ const Pricing = () => {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Admin link */}
+      <div className="mt-8 text-center">
+        <a 
+          href="/admin" 
+          className="text-xs text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+        >
+          Área administrativa
+        </a>
+      </div>
     </section>
   );
 };
