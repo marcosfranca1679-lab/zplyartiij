@@ -475,20 +475,6 @@ const Pricing = () => {
         </Dialog>
       </div>
 
-      {/* Admin link */}
-      <div className="mt-8 text-center">
-        <a 
-          href="/admin" 
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground bg-muted/50 hover:bg-muted rounded-lg transition-colors border border-border/50"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-            <polyline points="10 17 15 12 10 7"/>
-            <line x1="15" y1="12" x2="3" y2="12"/>
-          </svg>
-          Login Admin
-        </a>
-      </div>
     </section>
   );
 };
