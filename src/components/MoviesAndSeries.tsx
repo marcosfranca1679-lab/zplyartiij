@@ -8,6 +8,12 @@ import loneStar from "@/assets/movies/911-lone-star.webp";
 import morteDoDemonio from "@/assets/movies/morte-do-demonio.jpg";
 import atracaoPerigosa from "@/assets/movies/atracao-perigosa.jpg";
 import beezel from "@/assets/movies/beezel.jpg";
+import milagreRua34 from "@/assets/movies/milagre-rua-34.jpg";
+import voces from "@/assets/movies/voces.jpg";
+import houseOfTheDragon from "@/assets/movies/house-of-the-dragon.jpg";
+import dexter from "@/assets/movies/dexter.jpg";
+import origem from "@/assets/movies/origem.jpg";
+import electricState from "@/assets/movies/electric-state.jpg";
 
 const content = [
   { id: 1, title: "Titanic", image: titanic, type: "Filme" },
@@ -20,6 +26,12 @@ const content = [
   { id: 8, title: "A Morte do Demônio", image: morteDoDemonio, type: "Filme" },
   { id: 9, title: "Atração Perigosa", image: atracaoPerigosa, type: "Filme" },
   { id: 10, title: "Beezel", image: beezel, type: "Filme" },
+  { id: 11, title: "Milagre na Rua 34", image: milagreRua34, type: "Filme" },
+  { id: 12, title: "Voces", image: voces, type: "Filme" },
+  { id: 13, title: "House of the Dragon", image: houseOfTheDragon, type: "Série" },
+  { id: 14, title: "Dexter", image: dexter, type: "Série" },
+  { id: 15, title: "Origem", image: origem, type: "Série" },
+  { id: 16, title: "The Electric State", image: electricState, type: "Filme" },
 ];
 
 const MoviesAndSeries = () => {
