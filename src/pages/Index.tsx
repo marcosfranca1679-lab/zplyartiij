@@ -6,12 +6,14 @@ import Testimonials from "@/components/Testimonials";
 import ContentUpdates from "@/components/ContentUpdates";
 import Footer from "@/components/Footer";
 import HowToWatch from "@/components/HowToWatch";
+import MoviesAndSeries from "@/components/MoviesAndSeries";
 
 const Index = () => {
   return (
     <main className="min-h-screen bg-background">
       <Hero />
       <Channels />
+      <MoviesAndSeries />
       <Pricing />
       <HowItWorks />
       <Testimonials />
