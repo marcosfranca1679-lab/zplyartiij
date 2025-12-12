@@ -1,4 +1,5 @@
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 import titanic from "@/assets/movies/titanic.jpg";
 import comoEuEra from "@/assets/movies/como-eu-era-antes-de-voce.jpg";
 import reacher from "@/assets/movies/reacher.png";
@@ -61,6 +62,12 @@ const ContentCarousel = ({ title, items }: ContentCarouselProps) => (
         align: "start",
         loop: true,
       }}
+      plugins={[
+        Autoplay({
+          delay: 5000,
+          stopOnInteraction: true,
+        }),
+      ]}
       className="w-full"
     >
       <CarouselContent className="-ml-2 md:-ml-4">
