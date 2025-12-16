@@ -5,13 +5,13 @@ const categories = [
   {
     icon: Tv2,
     name: "Canais Abertos",
-    count: "1000+",
+    count: "+2000",
     gradient: "from-blue-500 to-cyan-500"
   },
   {
     icon: Film,
     name: "Filmes & Séries",
-    count: "5000+",
+    count: "+10000",
     gradient: "from-purple-500 to-pink-500"
   },
   {
