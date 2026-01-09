@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check, Share2, Lock, UserCircle, Shield } from "lucide-react";
+import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check, Share2, Lock, UserCircle, Shield, CreditCard } from "lucide-react";
+import { ClientPaymentsModal } from "@/components/ClientPaymentsModal";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
@@ -53,6 +54,8 @@ const ClientRegistration = () => {
   const [editForm, setEditForm] = useState<Partial<Client>>({});
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
+  const [paymentsModalOpen, setPaymentsModalOpen] = useState(false);
+  const [selectedClientForPayments, setSelectedClientForPayments] = useState<Client | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -637,6 +640,18 @@ ${loyaltyText}`;
                                 <Button
                                   size="sm"
                                   variant="ghost"
+                                  onClick={() => {
+                                    setSelectedClientForPayments(client);
+                                    setPaymentsModalOpen(true);
+                                  }}
+                                  className="h-8 w-8 p-0 text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10"
+                                  title="Pagamentos"
+                                >
+                                  <CreditCard className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
                                   onClick={() => handleShare(client)}
                                   className="h-8 w-8 p-0 text-green-500 hover:text-green-400 hover:bg-green-500/10"
                                   title="Compartilhar"
@@ -696,6 +711,12 @@ ${loyaltyText}`;
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ClientPaymentsModal
+        client={selectedClientForPayments}
+        open={paymentsModalOpen}
+        onOpenChange={setPaymentsModalOpen}
+      />
     </div>
   );
 };
