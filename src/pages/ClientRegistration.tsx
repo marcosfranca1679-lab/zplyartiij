@@ -7,8 +7,18 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { User, Phone, Mail, Hash, LogOut, Plus, Calendar } from "lucide-react";
+import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Client {
   id: string;
@@ -32,6 +42,10 @@ const ClientRegistration = () => {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [clients, setClients] = useState<Client[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Partial<Client>>({});
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -129,6 +143,100 @@ const ClientRegistration = () => {
     }
   };
 
+  const handleEdit = (client: Client) => {
+    setEditingId(client.id);
+    setEditForm({
+      name: client.name,
+      phone: client.phone,
+      email: client.email,
+      client_code: client.client_code,
+      subscription_type: client.subscription_type,
+      registration_date: client.registration_date,
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditForm({});
+  };
+
+  const handleSaveEdit = async (clientId: string) => {
+    try {
+      const { error } = await supabase
+        .from("clients")
+        .update({
+          name: editForm.name?.trim(),
+          phone: editForm.phone?.trim(),
+          email: editForm.email?.trim(),
+          client_code: editForm.client_code?.trim(),
+          subscription_type: editForm.subscription_type,
+          registration_date: editForm.registration_date,
+        })
+        .eq("id", clientId);
+
+      if (error) {
+        toast({
+          title: "Erro ao atualizar",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Cliente atualizado!",
+          description: "Os dados foram salvos com sucesso",
+        });
+        setEditingId(null);
+        setEditForm({});
+        fetchClients();
+      }
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro inesperado",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteClick = (client: Client) => {
+    setClientToDelete(client);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!clientToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from("clients")
+        .delete()
+        .eq("id", clientToDelete.id);
+
+      if (error) {
+        toast({
+          title: "Erro ao excluir",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Cliente excluído!",
+          description: "O cliente foi removido com sucesso",
+        });
+        fetchClients();
+      }
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro inesperado",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleteDialogOpen(false);
+      setClientToDelete(null);
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
@@ -144,7 +252,7 @@ const ClientRegistration = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black p-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-white">Cadastro de Clientes</h1>
           <Button variant="outline" onClick={handleLogout} className="border-gray-700 text-gray-300 hover:bg-gray-800">
@@ -279,19 +387,117 @@ const ClientRegistration = () => {
                       <TableHead className="text-gray-400">Código</TableHead>
                       <TableHead className="text-gray-400">Assinatura</TableHead>
                       <TableHead className="text-gray-400">Data Cadastro</TableHead>
+                      <TableHead className="text-gray-400">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {clients.map((client) => (
                       <TableRow key={client.id} className="border-gray-700">
-                        <TableCell className="text-white">{client.name}</TableCell>
-                        <TableCell className="text-gray-300">{client.phone}</TableCell>
-                        <TableCell className="text-gray-300">{client.email}</TableCell>
-                        <TableCell className="text-gray-300">{client.client_code}</TableCell>
-                        <TableCell className="text-gray-300 capitalize">{client.subscription_type}</TableCell>
-                        <TableCell className="text-gray-300">
-                          {new Date(client.registration_date).toLocaleDateString("pt-BR")}
-                        </TableCell>
+                        {editingId === client.id ? (
+                          <>
+                            <TableCell>
+                              <Input
+                                value={editForm.name || ""}
+                                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                                className="bg-gray-800 border-gray-700 text-white h-8"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                value={editForm.phone || ""}
+                                onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                                className="bg-gray-800 border-gray-700 text-white h-8"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                value={editForm.email || ""}
+                                onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                                className="bg-gray-800 border-gray-700 text-white h-8"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                value={editForm.client_code || ""}
+                                onChange={(e) => setEditForm({ ...editForm, client_code: e.target.value })}
+                                className="bg-gray-800 border-gray-700 text-white h-8"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Select
+                                value={editForm.subscription_type || ""}
+                                onValueChange={(value) => setEditForm({ ...editForm, subscription_type: value })}
+                              >
+                                <SelectTrigger className="bg-gray-800 border-gray-700 text-white h-8">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="bg-gray-800 border-gray-700">
+                                  <SelectItem value="mensal" className="text-white">Mensal</SelectItem>
+                                  <SelectItem value="trimestral" className="text-white">Trimestral</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                type="date"
+                                value={editForm.registration_date || ""}
+                                onChange={(e) => setEditForm({ ...editForm, registration_date: e.target.value })}
+                                className="bg-gray-800 border-gray-700 text-white h-8"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleSaveEdit(client.id)}
+                                  className="h-8 w-8 p-0 text-green-500 hover:text-green-400 hover:bg-green-500/10"
+                                >
+                                  <Check className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={handleCancelEdit}
+                                  className="h-8 w-8 p-0 text-gray-400 hover:text-gray-300 hover:bg-gray-700"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </>
+                        ) : (
+                          <>
+                            <TableCell className="text-white">{client.name}</TableCell>
+                            <TableCell className="text-gray-300">{client.phone}</TableCell>
+                            <TableCell className="text-gray-300">{client.email}</TableCell>
+                            <TableCell className="text-gray-300">{client.client_code}</TableCell>
+                            <TableCell className="text-gray-300 capitalize">{client.subscription_type}</TableCell>
+                            <TableCell className="text-gray-300">
+                              {new Date(client.registration_date).toLocaleDateString("pt-BR")}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleEdit(client)}
+                                  className="h-8 w-8 p-0 text-blue-500 hover:text-blue-400 hover:bg-blue-500/10"
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleDeleteClick(client)}
+                                  className="h-8 w-8 p-0 text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </>
+                        )}
                       </TableRow>
                     ))}
                   </TableBody>
@@ -301,6 +507,28 @@ const ClientRegistration = () => {
           </Card>
         )}
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="bg-gray-900 border-gray-700">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">Excluir Cliente</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400">
+              Tem certeza que deseja excluir o cliente <span className="text-white font-semibold">{clientToDelete?.name}</span>? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
