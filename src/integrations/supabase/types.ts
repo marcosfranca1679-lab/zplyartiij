@@ -23,6 +23,7 @@ export type Database = {
           id: string
           name: string
           phone: string
+          registration_date: string
           subscription_type: string
         }
         Insert: {
@@ -33,6 +34,7 @@ export type Database = {
           id?: string
           name: string
           phone: string
+          registration_date?: string
           subscription_type: string
         }
         Update: {
@@ -43,6 +45,7 @@ export type Database = {
           id?: string
           name?: string
           phone?: string
+          registration_date?: string
           subscription_type?: string
         }
         Relationships: []

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { User, Phone, Mail, Hash, LogOut, Plus } from "lucide-react";
+import { User, Phone, Mail, Hash, LogOut, Plus, Calendar } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface Client {
@@ -18,6 +18,7 @@ interface Client {
   client_code: string;
   subscription_type: string;
   created_at: string;
+  registration_date: string;
 }
 
 const ClientRegistration = () => {
@@ -26,6 +27,7 @@ const ClientRegistration = () => {
   const [email, setEmail] = useState("");
   const [clientCode, setClientCode] = useState("");
   const [subscriptionType, setSubscriptionType] = useState("");
+  const [registrationDate, setRegistrationDate] = useState(new Date().toISOString().split('T')[0]);
   const [loading, setLoading] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [clients, setClients] = useState<Client[]>([]);
@@ -93,6 +95,7 @@ const ClientRegistration = () => {
         email: email.trim(),
         client_code: clientCode.trim(),
         subscription_type: subscriptionType,
+        registration_date: registrationDate,
         created_by: userId,
       });
 
@@ -112,6 +115,7 @@ const ClientRegistration = () => {
         setEmail("");
         setClientCode("");
         setSubscriptionType("");
+        setRegistrationDate(new Date().toISOString().split('T')[0]);
         fetchClients();
       }
     } catch (error) {
@@ -220,17 +224,33 @@ const ClientRegistration = () => {
                   </div>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="subscription" className="text-white">Tipo de Assinatura</Label>
-                <Select value={subscriptionType} onValueChange={setSubscriptionType}>
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                    <SelectValue placeholder="Selecione a assinatura" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-700">
-                    <SelectItem value="mensal" className="text-white hover:bg-gray-700">Mensal</SelectItem>
-                    <SelectItem value="trimestral" className="text-white hover:bg-gray-700">Trimestral</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="registrationDate" className="text-white">Data do Cadastro</Label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="registrationDate"
+                      type="date"
+                      value={registrationDate}
+                      onChange={(e) => setRegistrationDate(e.target.value)}
+                      className="pl-10 bg-gray-800 border-gray-700 text-white"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="subscription" className="text-white">Tipo de Assinatura</Label>
+                  <Select value={subscriptionType} onValueChange={setSubscriptionType}>
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                      <SelectValue placeholder="Selecione a assinatura" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700">
+                      <SelectItem value="mensal" className="text-white hover:bg-gray-700">Mensal</SelectItem>
+                      <SelectItem value="trimestral" className="text-white hover:bg-gray-700">Trimestral</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <Button
                 type="submit"
@@ -258,7 +278,7 @@ const ClientRegistration = () => {
                       <TableHead className="text-gray-400">Email</TableHead>
                       <TableHead className="text-gray-400">Código</TableHead>
                       <TableHead className="text-gray-400">Assinatura</TableHead>
-                      <TableHead className="text-gray-400">Data</TableHead>
+                      <TableHead className="text-gray-400">Data Cadastro</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -270,7 +290,7 @@ const ClientRegistration = () => {
                         <TableCell className="text-gray-300">{client.client_code}</TableCell>
                         <TableCell className="text-gray-300 capitalize">{client.subscription_type}</TableCell>
                         <TableCell className="text-gray-300">
-                          {new Date(client.created_at).toLocaleDateString("pt-BR")}
+                          {new Date(client.registration_date).toLocaleDateString("pt-BR")}
                         </TableCell>
                       </TableRow>
                     ))}
