@@ -143,9 +143,10 @@ export const ClientPaymentsModal = ({ client, open, onOpenChange }: ClientPaymen
   const handleShareReceipt = async (payment: ClientPayment) => {
     if (!client) return;
 
-    const paymentDate = new Date(payment.payment_month);
+    // Usar T00:00:00 para evitar problemas de timezone
+    const paymentDate = new Date(payment.paid_at);
     const monthName = format(paymentDate, "MMMM 'de' yyyy", { locale: ptBR });
-    const paidAtFormatted = format(new Date(payment.paid_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
+    const paidAtFormatted = format(paymentDate, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
 
     const receiptText = `📺 *ZPlayer IPTV - Comprovante de Pagamento*
 
