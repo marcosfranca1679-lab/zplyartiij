@@ -7,10 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check, Share2, Lock, UserCircle, Shield, CreditCard } from "lucide-react";
+import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check, Share2, Lock, UserCircle, Shield, CreditCard, Users, Search, RefreshCw } from "lucide-react";
 import { ClientPaymentsModal } from "@/components/ClientPaymentsModal";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -56,6 +57,7 @@ const ClientRegistration = () => {
   const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
   const [paymentsModalOpen, setPaymentsModalOpen] = useState(false);
   const [selectedClientForPayments, setSelectedClientForPayments] = useState<Client | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -325,293 +327,444 @@ ${loyaltyText}`;
   const getVencimentoInfo = (client: Client) => {
     const registrationDay = new Date(client.registration_date).getDate();
     if (client.subscription_type === "mensal") {
-      return `Vencimento: dia ${registrationDay} de cada mês`;
+      return `Dia ${registrationDay}/mês`;
     } else {
-      return `Vencimento: dia ${registrationDay} a cada 3 meses`;
+      return `Dia ${registrationDay}/trim.`;
     }
   };
 
+  const filteredClients = clients.filter(client =>
+    client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    client.phone.includes(searchQuery) ||
+    client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    client.client_code.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (checkingAuth) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-primary border-t-transparent"></div>
+          <p className="text-muted-foreground text-sm">Carregando...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black p-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-white">Cadastro de Clientes</h1>
-          <Button variant="outline" onClick={handleLogout} className="border-gray-700 text-gray-300 hover:bg-gray-800">
-            <LogOut className="h-4 w-4 mr-2" />
-            Sair
-          </Button>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
+                <Users className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-foreground">Gestão de Clientes</h1>
+                <p className="text-xs text-muted-foreground">ZPlayer IPTV</p>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={handleLogout} 
+              className="border-border/50 text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-all"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sair
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <Card className="bg-card/50 border-border/50 backdrop-blur-sm hover:bg-card/70 transition-all">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total de Clientes</p>
+                  <p className="text-2xl font-bold text-foreground">{clients.length}</p>
+                </div>
+                <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Users className="h-6 w-6 text-primary" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-card/50 border-border/50 backdrop-blur-sm hover:bg-card/70 transition-all">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Com Fidelidade</p>
+                  <p className="text-2xl font-bold text-foreground">{clients.filter(c => c.has_loyalty).length}</p>
+                </div>
+                <div className="h-12 w-12 rounded-xl bg-yellow-500/10 flex items-center justify-center">
+                  <Shield className="h-6 w-6 text-yellow-500" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-card/50 border-border/50 backdrop-blur-sm hover:bg-card/70 transition-all">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Plano Trimestral</p>
+                  <p className="text-2xl font-bold text-foreground">{clients.filter(c => c.subscription_type === 'trimestral').length}</p>
+                </div>
+                <div className="h-12 w-12 rounded-xl bg-green-500/10 flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-green-500" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        <Card className="bg-gray-900/80 border-gray-800 mb-6">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Plus className="h-5 w-5" />
-              Novo Cliente
-            </CardTitle>
-            <CardDescription className="text-gray-400">
-              Preencha os dados do cliente
-            </CardDescription>
+        {/* New Client Form */}
+        <Card className="bg-card/50 border-border/50 backdrop-blur-sm mb-8 overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-primary/10 via-accent/10 to-transparent border-b border-border/50">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <Plus className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <div>
+                <CardTitle className="text-foreground">Novo Cliente</CardTitle>
+                <CardDescription className="text-muted-foreground">
+                  Preencha os dados para cadastrar um novo cliente
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-white">Nome</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="name"
-                      placeholder="Nome completo"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="pl-10 bg-gray-800 border-gray-700 text-white"
-                      required
-                    />
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Personal Info */}
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-4 flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Informações Pessoais
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-foreground text-sm">Nome Completo</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="name"
+                        placeholder="Nome do cliente"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="pl-10 bg-secondary/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 transition-all"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-white">Telefone</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="phone"
-                      placeholder="(00) 00000-0000"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="pl-10 bg-gray-800 border-gray-700 text-white"
-                      required
-                    />
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="text-foreground text-sm">Telefone</Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="phone"
+                        placeholder="(00) 00000-0000"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="pl-10 bg-secondary/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 transition-all"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="email@exemplo.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 bg-gray-800 border-gray-700 text-white"
-                      required
-                    />
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-foreground text-sm">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="email@exemplo.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-10 bg-secondary/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 transition-all"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="clientCode" className="text-white">Código do Cliente</Label>
-                  <div className="relative">
-                    <Hash className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="clientCode"
-                      placeholder="Código"
-                      value={clientCode}
-                      onChange={(e) => setClientCode(e.target.value)}
-                      className="pl-10 bg-gray-800 border-gray-700 text-white"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="username" className="text-white">Usuário</Label>
-                  <div className="relative">
-                    <UserCircle className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="username"
-                      placeholder="Nome de usuário"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="pl-10 bg-gray-800 border-gray-700 text-white"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-white">Senha</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="password"
-                      placeholder="Senha do cliente"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10 bg-gray-800 border-gray-700 text-white"
-                    />
+                  <div className="space-y-2">
+                    <Label htmlFor="clientCode" className="text-foreground text-sm">Código do Cliente</Label>
+                    <div className="relative">
+                      <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="clientCode"
+                        placeholder="Código único"
+                        value={clientCode}
+                        onChange={(e) => setClientCode(e.target.value)}
+                        className="pl-10 bg-secondary/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 transition-all"
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="registrationDate" className="text-white">Data do Cadastro</Label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="registrationDate"
-                      type="date"
-                      value={registrationDate}
-                      onChange={(e) => setRegistrationDate(e.target.value)}
-                      className="pl-10 bg-gray-800 border-gray-700 text-white"
-                      required
-                    />
+
+              {/* Access Credentials */}
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-4 flex items-center gap-2">
+                  <Lock className="h-4 w-4" />
+                  Credenciais de Acesso
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="text-foreground text-sm">Usuário</Label>
+                    <div className="relative">
+                      <UserCircle className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="username"
+                        placeholder="Nome de usuário"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className="pl-10 bg-secondary/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 transition-all"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-foreground text-sm">Senha</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="password"
+                        placeholder="Senha do cliente"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pl-10 bg-secondary/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:ring-primary/20 transition-all"
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="subscription" className="text-white">Tipo de Assinatura</Label>
-                  <Select value={subscriptionType} onValueChange={setSubscriptionType}>
-                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                      <SelectValue placeholder="Selecione a assinatura" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-700">
-                      <SelectItem value="mensal" className="text-white hover:bg-gray-700">Mensal</SelectItem>
-                      <SelectItem value="trimestral" className="text-white hover:bg-gray-700">Trimestral</SelectItem>
-                    </SelectContent>
-                  </Select>
+              </div>
+
+              {/* Subscription Info */}
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-4 flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Informações da Assinatura
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="registrationDate" className="text-foreground text-sm">Data do Cadastro</Label>
+                    <div className="relative">
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="registrationDate"
+                        type="date"
+                        value={registrationDate}
+                        onChange={(e) => setRegistrationDate(e.target.value)}
+                        className="pl-10 bg-secondary/50 border-border/50 text-foreground focus:border-primary/50 focus:ring-primary/20 transition-all"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="subscription" className="text-foreground text-sm">Tipo de Assinatura</Label>
+                    <Select value={subscriptionType} onValueChange={setSubscriptionType}>
+                      <SelectTrigger className="bg-secondary/50 border-border/50 text-foreground focus:border-primary/50 focus:ring-primary/20">
+                        <SelectValue placeholder="Selecione o plano" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card border-border">
+                        <SelectItem value="mensal" className="text-foreground hover:bg-secondary/50">
+                          <span className="flex items-center gap-2">
+                            <Badge variant="secondary" className="text-xs">R$ 29,90</Badge>
+                            Mensal
+                          </span>
+                        </SelectItem>
+                        <SelectItem value="trimestral" className="text-foreground hover:bg-secondary/50">
+                          <span className="flex items-center gap-2">
+                            <Badge variant="secondary" className="text-xs">R$ 74,90</Badge>
+                            Trimestral
+                          </span>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center space-x-3 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                <Shield className="h-5 w-5 text-yellow-500" />
-                <div className="flex-1">
-                  <Label htmlFor="loyalty" className="text-white font-medium">Contrato com Fidelidade</Label>
-                  <p className="text-gray-400 text-sm">Ativar período de fidelidade de 12 meses</p>
+
+              {/* Loyalty Toggle */}
+              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-500/10 via-yellow-500/5 to-transparent rounded-xl border border-yellow-500/20">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-yellow-500/20 flex items-center justify-center">
+                    <Shield className="h-5 w-5 text-yellow-500" />
+                  </div>
+                  <div>
+                    <Label htmlFor="loyalty" className="text-foreground font-medium">Contrato com Fidelidade</Label>
+                    <p className="text-muted-foreground text-sm">Período mínimo de 12 meses</p>
+                  </div>
                 </div>
                 <Switch
                   id="loyalty"
                   checked={hasLoyalty}
                   onCheckedChange={setHasLoyalty}
+                  className="data-[state=checked]:bg-yellow-500"
                 />
               </div>
+
               <Button
                 type="submit"
-                className="w-full bg-red-600 hover:bg-red-700"
+                className="w-full h-12 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold shadow-lg shadow-primary/25 transition-all"
                 disabled={loading}
               >
-                {loading ? "Cadastrando..." : "Cadastrar Cliente"}
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-foreground border-t-transparent"></div>
+                    Cadastrando...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <Plus className="h-5 w-5" />
+                    Cadastrar Cliente
+                  </span>
+                )}
               </Button>
             </form>
           </CardContent>
         </Card>
 
+        {/* Clients Table */}
         {clients.length > 0 && (
-          <Card className="bg-gray-900/80 border-gray-800">
-            <CardHeader>
-              <CardTitle className="text-white">Clientes Cadastrados</CardTitle>
+          <Card className="bg-card/50 border-border/50 backdrop-blur-sm overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-secondary/50 via-secondary/30 to-transparent border-b border-border/50">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-secondary flex items-center justify-center">
+                    <Users className="h-5 w-5 text-foreground" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-foreground">Clientes Cadastrados</CardTitle>
+                    <CardDescription className="text-muted-foreground">
+                      {filteredClients.length} de {clients.length} clientes
+                    </CardDescription>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1 sm:w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Buscar cliente..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10 bg-secondary/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary/50"
+                    />
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={fetchClients}
+                    className="border-border/50 text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-gray-700">
-                      <TableHead className="text-gray-400">Nome</TableHead>
-                      <TableHead className="text-gray-400">Telefone</TableHead>
-                      <TableHead className="text-gray-400">Email</TableHead>
-                      <TableHead className="text-gray-400">Código</TableHead>
-                      <TableHead className="text-gray-400">Usuário</TableHead>
-                      <TableHead className="text-gray-400">Senha</TableHead>
-                      <TableHead className="text-gray-400">Assinatura</TableHead>
-                      <TableHead className="text-gray-400">Fidelidade</TableHead>
-                      <TableHead className="text-gray-400">Vencimento</TableHead>
-                      <TableHead className="text-gray-400">Ações</TableHead>
+                    <TableRow className="border-border/50 hover:bg-transparent">
+                      <TableHead className="text-muted-foreground font-medium">Cliente</TableHead>
+                      <TableHead className="text-muted-foreground font-medium">Contato</TableHead>
+                      <TableHead className="text-muted-foreground font-medium">Credenciais</TableHead>
+                      <TableHead className="text-muted-foreground font-medium">Plano</TableHead>
+                      <TableHead className="text-muted-foreground font-medium">Status</TableHead>
+                      <TableHead className="text-muted-foreground font-medium text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {clients.map((client) => (
-                      <TableRow key={client.id} className="border-gray-700">
+                    {filteredClients.map((client) => (
+                      <TableRow key={client.id} className="border-border/50 hover:bg-secondary/30 transition-colors">
                         {editingId === client.id ? (
                           <>
-                            <TableCell>
-                              <Input
-                                value={editForm.name || ""}
-                                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                                className="bg-gray-800 border-gray-700 text-white h-8"
-                              />
+                            <TableCell colSpan={5} className="p-4">
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <Input
+                                  value={editForm.name || ""}
+                                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                                  className="bg-secondary/50 border-border/50 text-foreground h-9"
+                                  placeholder="Nome"
+                                />
+                                <Input
+                                  value={editForm.phone || ""}
+                                  onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                                  className="bg-secondary/50 border-border/50 text-foreground h-9"
+                                  placeholder="Telefone"
+                                />
+                                <Input
+                                  value={editForm.email || ""}
+                                  onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                                  className="bg-secondary/50 border-border/50 text-foreground h-9"
+                                  placeholder="Email"
+                                />
+                                <Input
+                                  value={editForm.client_code || ""}
+                                  onChange={(e) => setEditForm({ ...editForm, client_code: e.target.value })}
+                                  className="bg-secondary/50 border-border/50 text-foreground h-9"
+                                  placeholder="Código"
+                                />
+                                <Input
+                                  value={editForm.username || ""}
+                                  onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
+                                  className="bg-secondary/50 border-border/50 text-foreground h-9"
+                                  placeholder="Usuário"
+                                />
+                                <Input
+                                  value={editForm.password_hash || ""}
+                                  onChange={(e) => setEditForm({ ...editForm, password_hash: e.target.value })}
+                                  className="bg-secondary/50 border-border/50 text-foreground h-9"
+                                  placeholder="Senha"
+                                />
+                                <Select
+                                  value={editForm.subscription_type || ""}
+                                  onValueChange={(value) => setEditForm({ ...editForm, subscription_type: value })}
+                                >
+                                  <SelectTrigger className="bg-secondary/50 border-border/50 text-foreground h-9">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent className="bg-card border-border">
+                                    <SelectItem value="mensal" className="text-foreground">Mensal</SelectItem>
+                                    <SelectItem value="trimestral" className="text-foreground">Trimestral</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <Input
+                                  type="date"
+                                  value={editForm.registration_date || ""}
+                                  onChange={(e) => setEditForm({ ...editForm, registration_date: e.target.value })}
+                                  className="bg-secondary/50 border-border/50 text-foreground h-9"
+                                />
+                              </div>
+                              <div className="flex items-center gap-3 mt-3">
+                                <div className="flex items-center gap-2">
+                                  <Switch
+                                    checked={editForm.has_loyalty || false}
+                                    onCheckedChange={(checked) => setEditForm({ ...editForm, has_loyalty: checked })}
+                                  />
+                                  <span className="text-sm text-muted-foreground">Fidelidade</span>
+                                </div>
+                              </div>
                             </TableCell>
-                            <TableCell>
-                              <Input
-                                value={editForm.phone || ""}
-                                onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                                className="bg-gray-800 border-gray-700 text-white h-8"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Input
-                                value={editForm.email || ""}
-                                onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                                className="bg-gray-800 border-gray-700 text-white h-8"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Input
-                                value={editForm.client_code || ""}
-                                onChange={(e) => setEditForm({ ...editForm, client_code: e.target.value })}
-                                className="bg-gray-800 border-gray-700 text-white h-8"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Input
-                                value={editForm.username || ""}
-                                onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
-                                className="bg-gray-800 border-gray-700 text-white h-8"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Input
-                                value={editForm.password_hash || ""}
-                                onChange={(e) => setEditForm({ ...editForm, password_hash: e.target.value })}
-                                className="bg-gray-800 border-gray-700 text-white h-8"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Select
-                                value={editForm.subscription_type || ""}
-                                onValueChange={(value) => setEditForm({ ...editForm, subscription_type: value })}
-                              >
-                                <SelectTrigger className="bg-gray-800 border-gray-700 text-white h-8">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="bg-gray-800 border-gray-700">
-                                  <SelectItem value="mensal" className="text-white">Mensal</SelectItem>
-                                  <SelectItem value="trimestral" className="text-white">Trimestral</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </TableCell>
-                            <TableCell>
-                              <Switch
-                                checked={editForm.has_loyalty || false}
-                                onCheckedChange={(checked) => setEditForm({ ...editForm, has_loyalty: checked })}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Input
-                                type="date"
-                                value={editForm.registration_date || ""}
-                                onChange={(e) => setEditForm({ ...editForm, registration_date: e.target.value })}
-                                className="bg-gray-800 border-gray-700 text-white h-8"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex gap-1">
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-1">
                                 <Button
                                   size="sm"
-                                  variant="ghost"
                                   onClick={() => handleSaveEdit(client.id)}
-                                  className="h-8 w-8 p-0 text-green-500 hover:text-green-400 hover:bg-green-500/10"
+                                  className="h-8 bg-green-500/20 text-green-500 hover:bg-green-500/30"
                                 >
-                                  <Check className="h-4 w-4" />
+                                  <Check className="h-4 w-4 mr-1" />
+                                  Salvar
                                 </Button>
                                 <Button
                                   size="sm"
                                   variant="ghost"
                                   onClick={handleCancelEdit}
-                                  className="h-8 w-8 p-0 text-gray-400 hover:text-gray-300 hover:bg-gray-700"
+                                  className="h-8 text-muted-foreground hover:text-foreground"
                                 >
                                   <X className="h-4 w-4" />
                                 </Button>
@@ -620,58 +773,102 @@ ${loyaltyText}`;
                           </>
                         ) : (
                           <>
-                            <TableCell className="text-white">{client.name}</TableCell>
-                            <TableCell className="text-gray-300">{client.phone}</TableCell>
-                            <TableCell className="text-gray-300">{client.email}</TableCell>
-                            <TableCell className="text-gray-300">{client.client_code}</TableCell>
-                            <TableCell className="text-gray-300">{client.username || "-"}</TableCell>
-                            <TableCell className="text-gray-300">{client.password_hash || "-"}</TableCell>
-                            <TableCell className="text-gray-300 capitalize">{client.subscription_type}</TableCell>
                             <TableCell>
-                              <span className={`px-2 py-1 rounded text-xs font-medium ${client.has_loyalty ? 'bg-yellow-500/20 text-yellow-400' : 'bg-gray-700 text-gray-400'}`}>
-                                {client.has_loyalty ? "Com Fidelidade" : "Sem Fidelidade"}
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-gray-300 text-xs">
-                              {getVencimentoInfo(client)}
+                              <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-primary font-semibold">
+                                  {client.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                  <p className="font-medium text-foreground">{client.name}</p>
+                                  <p className="text-xs text-muted-foreground">#{client.client_code}</p>
+                                </div>
+                              </div>
                             </TableCell>
                             <TableCell>
-                              <div className="flex gap-1">
+                              <div className="space-y-1">
+                                <p className="text-sm text-foreground flex items-center gap-1.5">
+                                  <Phone className="h-3 w-3 text-muted-foreground" />
+                                  {client.phone}
+                                </p>
+                                <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                                  <Mail className="h-3 w-3" />
+                                  {client.email}
+                                </p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="space-y-1">
+                                <p className="text-sm text-foreground font-mono">{client.username || "—"}</p>
+                                <p className="text-xs text-muted-foreground font-mono">{client.password_hash || "—"}</p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="space-y-1">
+                                <Badge 
+                                  variant="secondary" 
+                                  className={client.subscription_type === 'trimestral' 
+                                    ? 'bg-green-500/20 text-green-400 border-green-500/30' 
+                                    : 'bg-primary/20 text-primary border-primary/30'
+                                  }
+                                >
+                                  {client.subscription_type === 'mensal' ? 'Mensal' : 'Trimestral'}
+                                </Badge>
+                                <p className="text-xs text-muted-foreground">{getVencimentoInfo(client)}</p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge 
+                                variant="secondary"
+                                className={client.has_loyalty 
+                                  ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' 
+                                  : 'bg-secondary text-muted-foreground'
+                                }
+                              >
+                                {client.has_loyalty ? (
+                                  <span className="flex items-center gap-1">
+                                    <Shield className="h-3 w-3" />
+                                    Fidelidade
+                                  </span>
+                                ) : 'Sem Fidelidade'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex justify-end gap-1">
                                 <Button
-                                  size="sm"
+                                  size="icon"
                                   variant="ghost"
                                   onClick={() => {
                                     setSelectedClientForPayments(client);
                                     setPaymentsModalOpen(true);
                                   }}
-                                  className="h-8 w-8 p-0 text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10"
+                                  className="h-8 w-8 text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10"
                                   title="Pagamentos"
                                 >
                                   <CreditCard className="h-4 w-4" />
                                 </Button>
                                 <Button
-                                  size="sm"
+                                  size="icon"
                                   variant="ghost"
                                   onClick={() => handleShare(client)}
-                                  className="h-8 w-8 p-0 text-green-500 hover:text-green-400 hover:bg-green-500/10"
+                                  className="h-8 w-8 text-green-500 hover:text-green-400 hover:bg-green-500/10"
                                   title="Compartilhar"
                                 >
                                   <Share2 className="h-4 w-4" />
                                 </Button>
                                 <Button
-                                  size="sm"
+                                  size="icon"
                                   variant="ghost"
                                   onClick={() => handleEdit(client)}
-                                  className="h-8 w-8 p-0 text-blue-500 hover:text-blue-400 hover:bg-blue-500/10"
+                                  className="h-8 w-8 text-blue-500 hover:text-blue-400 hover:bg-blue-500/10"
                                   title="Editar"
                                 >
                                   <Pencil className="h-4 w-4" />
                                 </Button>
                                 <Button
-                                  size="sm"
+                                  size="icon"
                                   variant="ghost"
                                   onClick={() => handleDeleteClick(client)}
-                                  className="h-8 w-8 p-0 text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                                  className="h-8 w-8 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
                                   title="Excluir"
                                 >
                                   <Trash2 className="h-4 w-4" />
@@ -685,26 +882,45 @@ ${loyaltyText}`;
                   </TableBody>
                 </Table>
               </div>
+              
+              {filteredClients.length === 0 && searchQuery && (
+                <div className="p-8 text-center">
+                  <Search className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+                  <p className="text-muted-foreground">Nenhum cliente encontrado para "{searchQuery}"</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
-      </div>
+
+        {clients.length === 0 && (
+          <Card className="bg-card/50 border-border/50 backdrop-blur-sm">
+            <CardContent className="p-12 text-center">
+              <div className="h-16 w-16 rounded-2xl bg-secondary/50 flex items-center justify-center mx-auto mb-4">
+                <Users className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Nenhum cliente cadastrado</h3>
+              <p className="text-muted-foreground mb-4">Comece adicionando seu primeiro cliente usando o formulário acima.</p>
+            </CardContent>
+          </Card>
+        )}
+      </main>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className="bg-gray-900 border-gray-700">
+        <AlertDialogContent className="bg-card border-border">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-white">Excluir Cliente</AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-400">
-              Tem certeza que deseja excluir o cliente <span className="text-white font-semibold">{clientToDelete?.name}</span>? Esta ação não pode ser desfeita.
+            <AlertDialogTitle className="text-foreground">Excluir Cliente</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
+              Tem certeza que deseja excluir o cliente <span className="text-foreground font-semibold">{clientToDelete?.name}</span>? Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700">
+            <AlertDialogCancel className="bg-secondary border-border text-foreground hover:bg-secondary/80">
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
             >
               Excluir
             </AlertDialogAction>
