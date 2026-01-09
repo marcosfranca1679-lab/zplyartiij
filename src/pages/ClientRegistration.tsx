@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check, Share2, Lock, UserCircle } from "lucide-react";
+import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check, Share2, Lock, UserCircle, Shield } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   AlertDialog,
@@ -31,6 +32,7 @@ interface Client {
   registration_date: string;
   username: string | null;
   password: string | null;
+  has_loyalty: boolean;
 }
 
 const ClientRegistration = () => {
@@ -42,6 +44,7 @@ const ClientRegistration = () => {
   const [registrationDate, setRegistrationDate] = useState(new Date().toISOString().split('T')[0]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [hasLoyalty, setHasLoyalty] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [clients, setClients] = useState<Client[]>([]);
@@ -116,6 +119,7 @@ const ClientRegistration = () => {
         registration_date: registrationDate,
         username: username.trim() || null,
         password: password.trim() || null,
+        has_loyalty: hasLoyalty,
         created_by: userId,
       });
 
@@ -138,6 +142,7 @@ const ClientRegistration = () => {
         setRegistrationDate(new Date().toISOString().split('T')[0]);
         setUsername("");
         setPassword("");
+        setHasLoyalty(false);
         fetchClients();
       }
     } catch (error) {
@@ -162,6 +167,7 @@ const ClientRegistration = () => {
       registration_date: client.registration_date,
       username: client.username,
       password: client.password,
+      has_loyalty: client.has_loyalty,
     });
   };
 
@@ -183,6 +189,7 @@ const ClientRegistration = () => {
           registration_date: editForm.registration_date,
           username: editForm.username?.trim() || null,
           password: editForm.password?.trim() || null,
+          has_loyalty: editForm.has_loyalty,
         })
         .eq("id", clientId);
 
@@ -253,6 +260,20 @@ const ClientRegistration = () => {
     const registrationDay = new Date(client.registration_date).getDate();
     const subscriptionText = client.subscription_type === "mensal" ? "Mensal" : "Trimestral";
     
+    const loyaltyText = client.has_loyalty 
+      ? `⚠️ *TERMO DE FIDELIDADE*
+
+A presente assinatura possui período mínimo de fidelidade de 12 (doze) meses, contados a partir da data de cadastro do contratante.
+
+O não pagamento das mensalidades ou trimestralidades, conforme o plano escolhido, implicará na rescisão contratual e na aplicação de multa rescisória no valor total de R$ 230,00 (duzentos e trinta reais), calculada proporcionalmente ao período restante da fidelidade, no montante de R$ 19,00 (dezenove reais) por mês não cumprido.`
+      : `📄 *TERMO SEM FIDELIDADE*
+
+A assinatura não possui período de fidelidade.
+
+A cobrança é realizada de forma mensal ou trimestral, conforme o plano contratado.
+
+Em caso de não pagamento, não será aplicada multa, ocorrendo apenas a suspensão (corte) do sinal até a regularização do débito.`;
+    
     const shareText = `📺 *ZPlayer IPTV*
 
 👤 *Nome:* ${client.name}
@@ -265,7 +286,10 @@ const ClientRegistration = () => {
 🔑 Senha: ${client.password || "Não definida"}
 
 📋 *Assinatura:* ${subscriptionText}
-📅 *Vencimento:* Todo dia ${registrationDay} de cada ${client.subscription_type === "mensal" ? "mês" : "trimestre"}`;
+📅 *Vencimento:* Todo dia ${registrationDay} de cada ${client.subscription_type === "mensal" ? "mês" : "trimestre"}
+🔒 *Fidelidade:* ${client.has_loyalty ? "Com Fidelidade (12 meses)" : "Sem Fidelidade"}
+
+${loyaltyText}`;
 
     if (navigator.share) {
       try {
@@ -450,6 +474,18 @@ const ClientRegistration = () => {
                   </Select>
                 </div>
               </div>
+              <div className="flex items-center space-x-3 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                <Shield className="h-5 w-5 text-yellow-500" />
+                <div className="flex-1">
+                  <Label htmlFor="loyalty" className="text-white font-medium">Contrato com Fidelidade</Label>
+                  <p className="text-gray-400 text-sm">Ativar período de fidelidade de 12 meses</p>
+                </div>
+                <Switch
+                  id="loyalty"
+                  checked={hasLoyalty}
+                  onCheckedChange={setHasLoyalty}
+                />
+              </div>
               <Button
                 type="submit"
                 className="w-full bg-red-600 hover:bg-red-700"
@@ -478,6 +514,7 @@ const ClientRegistration = () => {
                       <TableHead className="text-gray-400">Usuário</TableHead>
                       <TableHead className="text-gray-400">Senha</TableHead>
                       <TableHead className="text-gray-400">Assinatura</TableHead>
+                      <TableHead className="text-gray-400">Fidelidade</TableHead>
                       <TableHead className="text-gray-400">Vencimento</TableHead>
                       <TableHead className="text-gray-400">Ações</TableHead>
                     </TableRow>
@@ -544,6 +581,12 @@ const ClientRegistration = () => {
                               </Select>
                             </TableCell>
                             <TableCell>
+                              <Switch
+                                checked={editForm.has_loyalty || false}
+                                onCheckedChange={(checked) => setEditForm({ ...editForm, has_loyalty: checked })}
+                              />
+                            </TableCell>
+                            <TableCell>
                               <Input
                                 type="date"
                                 value={editForm.registration_date || ""}
@@ -581,6 +624,11 @@ const ClientRegistration = () => {
                             <TableCell className="text-gray-300">{client.username || "-"}</TableCell>
                             <TableCell className="text-gray-300">{client.password || "-"}</TableCell>
                             <TableCell className="text-gray-300 capitalize">{client.subscription_type}</TableCell>
+                            <TableCell>
+                              <span className={`px-2 py-1 rounded text-xs font-medium ${client.has_loyalty ? 'bg-yellow-500/20 text-yellow-400' : 'bg-gray-700 text-gray-400'}`}>
+                                {client.has_loyalty ? "Com Fidelidade" : "Sem Fidelidade"}
+                              </span>
+                            </TableCell>
                             <TableCell className="text-gray-300 text-xs">
                               {getVencimentoInfo(client)}
                             </TableCell>

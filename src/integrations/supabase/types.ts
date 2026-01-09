@@ -20,6 +20,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           email: string
+          has_loyalty: boolean
           id: string
           name: string
           password: string | null
@@ -33,6 +34,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           email: string
+          has_loyalty?: boolean
           id?: string
           name: string
           password?: string | null
@@ -46,6 +48,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           email?: string
+          has_loyalty?: boolean
           id?: string
           name?: string
           password?: string | null
