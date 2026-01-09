@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      clients: {
+        Row: {
+          client_code: string
+          created_at: string
+          created_by: string | null
+          email: string
+          id: string
+          name: string
+          phone: string
+          subscription_type: string
+        }
+        Insert: {
+          client_code: string
+          created_at?: string
+          created_by?: string | null
+          email: string
+          id?: string
+          name: string
+          phone: string
+          subscription_type: string
+        }
+        Update: {
+          client_code?: string
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          id?: string
+          name?: string
+          phone?: string
+          subscription_type?: string
+        }
+        Relationships: []
+      }
       coupon_redemption_attempts: {
         Row: {
           created_at: string

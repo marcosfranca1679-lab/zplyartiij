@@ -10,6 +10,8 @@ import PaymentFailure from "./pages/PaymentFailure";
 import PaymentPending from "./pages/PaymentPending";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import ClientLogin from "./pages/ClientLogin";
+import ClientRegistration from "./pages/ClientRegistration";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +28,8 @@ const App = () => (
           <Route path="/pagamento/pendente" element={<PaymentPending />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/login" element={<ClientLogin />} />
+          <Route path="/cadastro-clientes" element={<ClientRegistration />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
