@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check } from "lucide-react";
+import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check, Share2, Lock, UserCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   AlertDialog,
@@ -29,6 +29,8 @@ interface Client {
   subscription_type: string;
   created_at: string;
   registration_date: string;
+  username: string | null;
+  password: string | null;
 }
 
 const ClientRegistration = () => {
@@ -38,6 +40,8 @@ const ClientRegistration = () => {
   const [clientCode, setClientCode] = useState("");
   const [subscriptionType, setSubscriptionType] = useState("");
   const [registrationDate, setRegistrationDate] = useState(new Date().toISOString().split('T')[0]);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [clients, setClients] = useState<Client[]>([]);
@@ -110,6 +114,8 @@ const ClientRegistration = () => {
         client_code: clientCode.trim(),
         subscription_type: subscriptionType,
         registration_date: registrationDate,
+        username: username.trim() || null,
+        password: password.trim() || null,
         created_by: userId,
       });
 
@@ -130,6 +136,8 @@ const ClientRegistration = () => {
         setClientCode("");
         setSubscriptionType("");
         setRegistrationDate(new Date().toISOString().split('T')[0]);
+        setUsername("");
+        setPassword("");
         fetchClients();
       }
     } catch (error) {
@@ -152,6 +160,8 @@ const ClientRegistration = () => {
       client_code: client.client_code,
       subscription_type: client.subscription_type,
       registration_date: client.registration_date,
+      username: client.username,
+      password: client.password,
     });
   };
 
@@ -171,6 +181,8 @@ const ClientRegistration = () => {
           client_code: editForm.client_code?.trim(),
           subscription_type: editForm.subscription_type,
           registration_date: editForm.registration_date,
+          username: editForm.username?.trim() || null,
+          password: editForm.password?.trim() || null,
         })
         .eq("id", clientId);
 
@@ -237,9 +249,59 @@ const ClientRegistration = () => {
     }
   };
 
+  const handleShare = async (client: Client) => {
+    const registrationDay = new Date(client.registration_date).getDate();
+    const subscriptionText = client.subscription_type === "mensal" ? "Mensal" : "Trimestral";
+    
+    const shareText = `📺 *ZPlayer IPTV*
+
+👤 *Nome:* ${client.name}
+📞 *Telefone:* ${client.phone}
+📧 *Email:* ${client.email}
+🔢 *Código:* ${client.client_code}
+
+🔐 *Dados de Acesso:*
+👤 Usuário: ${client.username || "Não definido"}
+🔑 Senha: ${client.password || "Não definida"}
+
+📋 *Assinatura:* ${subscriptionText}
+📅 *Vencimento:* Todo dia ${registrationDay} de cada ${client.subscription_type === "mensal" ? "mês" : "trimestre"}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Dados do Cliente - ZPlayer IPTV",
+          text: shareText,
+        });
+      } catch (error) {
+        // User cancelled or share failed, copy to clipboard instead
+        await navigator.clipboard.writeText(shareText);
+        toast({
+          title: "Copiado!",
+          description: "Os dados foram copiados para a área de transferência",
+        });
+      }
+    } else {
+      await navigator.clipboard.writeText(shareText);
+      toast({
+        title: "Copiado!",
+        description: "Os dados foram copiados para a área de transferência",
+      });
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
+  };
+
+  const getVencimentoInfo = (client: Client) => {
+    const registrationDay = new Date(client.registration_date).getDate();
+    if (client.subscription_type === "mensal") {
+      return `Vencimento: dia ${registrationDay} de cada mês`;
+    } else {
+      return `Vencimento: dia ${registrationDay} a cada 3 meses`;
+    }
   };
 
   if (checkingAuth) {
@@ -252,7 +314,7 @@ const ClientRegistration = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black p-4">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-white">Cadastro de Clientes</h1>
           <Button variant="outline" onClick={handleLogout} className="border-gray-700 text-gray-300 hover:bg-gray-800">
@@ -334,6 +396,34 @@ const ClientRegistration = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
+                  <Label htmlFor="username" className="text-white">Usuário</Label>
+                  <div className="relative">
+                    <UserCircle className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="username"
+                      placeholder="Nome de usuário"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="pl-10 bg-gray-800 border-gray-700 text-white"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-white">Senha</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="password"
+                      placeholder="Senha do cliente"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pl-10 bg-gray-800 border-gray-700 text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
                   <Label htmlFor="registrationDate" className="text-white">Data do Cadastro</Label>
                   <div className="relative">
                     <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -385,8 +475,10 @@ const ClientRegistration = () => {
                       <TableHead className="text-gray-400">Telefone</TableHead>
                       <TableHead className="text-gray-400">Email</TableHead>
                       <TableHead className="text-gray-400">Código</TableHead>
+                      <TableHead className="text-gray-400">Usuário</TableHead>
+                      <TableHead className="text-gray-400">Senha</TableHead>
                       <TableHead className="text-gray-400">Assinatura</TableHead>
-                      <TableHead className="text-gray-400">Data Cadastro</TableHead>
+                      <TableHead className="text-gray-400">Vencimento</TableHead>
                       <TableHead className="text-gray-400">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -424,6 +516,20 @@ const ClientRegistration = () => {
                               />
                             </TableCell>
                             <TableCell>
+                              <Input
+                                value={editForm.username || ""}
+                                onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
+                                className="bg-gray-800 border-gray-700 text-white h-8"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                value={editForm.password || ""}
+                                onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
+                                className="bg-gray-800 border-gray-700 text-white h-8"
+                              />
+                            </TableCell>
+                            <TableCell>
                               <Select
                                 value={editForm.subscription_type || ""}
                                 onValueChange={(value) => setEditForm({ ...editForm, subscription_type: value })}
@@ -446,7 +552,7 @@ const ClientRegistration = () => {
                               />
                             </TableCell>
                             <TableCell>
-                              <div className="flex gap-2">
+                              <div className="flex gap-1">
                                 <Button
                                   size="sm"
                                   variant="ghost"
@@ -472,17 +578,29 @@ const ClientRegistration = () => {
                             <TableCell className="text-gray-300">{client.phone}</TableCell>
                             <TableCell className="text-gray-300">{client.email}</TableCell>
                             <TableCell className="text-gray-300">{client.client_code}</TableCell>
+                            <TableCell className="text-gray-300">{client.username || "-"}</TableCell>
+                            <TableCell className="text-gray-300">{client.password || "-"}</TableCell>
                             <TableCell className="text-gray-300 capitalize">{client.subscription_type}</TableCell>
-                            <TableCell className="text-gray-300">
-                              {new Date(client.registration_date).toLocaleDateString("pt-BR")}
+                            <TableCell className="text-gray-300 text-xs">
+                              {getVencimentoInfo(client)}
                             </TableCell>
                             <TableCell>
-                              <div className="flex gap-2">
+                              <div className="flex gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleShare(client)}
+                                  className="h-8 w-8 p-0 text-green-500 hover:text-green-400 hover:bg-green-500/10"
+                                  title="Compartilhar"
+                                >
+                                  <Share2 className="h-4 w-4" />
+                                </Button>
                                 <Button
                                   size="sm"
                                   variant="ghost"
                                   onClick={() => handleEdit(client)}
                                   className="h-8 w-8 p-0 text-blue-500 hover:text-blue-400 hover:bg-blue-500/10"
+                                  title="Editar"
                                 >
                                   <Pencil className="h-4 w-4" />
                                 </Button>
@@ -491,6 +609,7 @@ const ClientRegistration = () => {
                                   variant="ghost"
                                   onClick={() => handleDeleteClick(client)}
                                   className="h-8 w-8 p-0 text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                                  title="Excluir"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>

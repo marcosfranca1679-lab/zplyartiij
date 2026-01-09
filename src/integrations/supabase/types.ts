@@ -22,9 +22,11 @@ export type Database = {
           email: string
           id: string
           name: string
+          password: string | null
           phone: string
           registration_date: string
           subscription_type: string
+          username: string | null
         }
         Insert: {
           client_code: string
@@ -33,9 +35,11 @@ export type Database = {
           email: string
           id?: string
           name: string
+          password?: string | null
           phone: string
           registration_date?: string
           subscription_type: string
+          username?: string | null
         }
         Update: {
           client_code?: string
@@ -44,9 +48,11 @@ export type Database = {
           email?: string
           id?: string
           name?: string
+          password?: string | null
           phone?: string
           registration_date?: string
           subscription_type?: string
+          username?: string | null
         }
         Relationships: []
       }
