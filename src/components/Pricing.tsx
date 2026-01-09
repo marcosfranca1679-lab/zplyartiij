@@ -180,11 +180,11 @@ const Pricing = () => {
 
   return (
     <section id="pricing" className="py-24 px-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/30 to-background" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/10 to-background" />
       
       <div className="container mx-auto relative z-10">
         <div className="text-center mb-16 space-y-4">
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
             Escolha Seu Plano
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -194,8 +194,8 @@ const Pricing = () => {
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* Monthly Plan */}
-          <Card className="relative transition-all duration-300 hover:scale-105 border-primary shadow-glow bg-gradient-to-b from-card to-secondary">
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-primary to-accent rounded-full text-xs font-semibold">
+          <Card className="relative transition-all duration-300 hover:scale-105 border-primary/50 shadow-lg shadow-primary/20 bg-gradient-to-b from-card via-card to-primary/10">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-primary to-accent rounded-full text-xs font-semibold text-white">
               PLANO MENSAL
             </div>
             
@@ -221,7 +221,7 @@ const Pricing = () => {
 
             <CardFooter>
               <Button 
-                className="w-full bg-gradient-to-r from-primary to-accent hover:shadow-glow"
+                className="w-full bg-gradient-to-r from-primary via-accent to-primary hover:shadow-lg hover:shadow-primary/40 text-white font-semibold"
                 size="lg"
                 onClick={() => openCheckout('monthly')}
                 disabled={loadingPlan !== null}
@@ -232,8 +232,8 @@ const Pricing = () => {
           </Card>
 
           {/* Gift Card - Quarterly Plan */}
-          <Card className="relative overflow-hidden transition-all duration-300 hover:scale-105 border-accent shadow-glow bg-gradient-to-br from-accent/20 via-card to-primary/20">
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-accent to-primary rounded-full text-xs font-semibold">
+          <Card className="relative overflow-hidden transition-all duration-300 hover:scale-105 border-accent/50 shadow-lg shadow-accent/20 bg-gradient-to-br from-accent/20 via-card to-primary/20">
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-accent to-primary rounded-full text-xs font-semibold text-white">
               CARTÃO PRESENTE
             </div>
             
@@ -284,7 +284,7 @@ const Pricing = () => {
 
             <CardFooter className="relative z-10">
               <Button 
-                className="w-full bg-gradient-to-r from-accent to-primary hover:shadow-glow text-background font-semibold"
+                className="w-full bg-gradient-to-r from-accent via-primary to-accent hover:shadow-lg hover:shadow-accent/40 text-white font-semibold"
                 size="lg"
                 onClick={() => openCheckout('quarterly')}
                 disabled={loadingPlan !== null}

@@ -20,14 +20,14 @@ const Hero = () => {
       <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
         <Link
           to="/cadastro-clientes"
-          className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-all duration-300 shadow-lg"
+          className="flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg transition-all duration-300 shadow-lg border border-white/20"
         >
           <List className="w-4 h-4" />
           <span className="hidden sm:inline">Lista</span>
         </Link>
         <Link
           to="/login"
-          className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-500/20"
+          className="flex items-center gap-2 bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-white px-4 py-2 rounded-lg transition-all duration-300 shadow-lg shadow-primary/30"
         >
           <LogIn className="w-4 h-4" />
           <span className="hidden sm:inline">Área Restrita</span>
@@ -35,16 +35,19 @@ const Hero = () => {
       </div>
 
       {/* Background with gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background z-0">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-background to-accent/20 z-0">
         <div 
-          className="absolute inset-0 opacity-20 bg-cover bg-center"
+          className="absolute inset-0 opacity-15 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroImage})` }}
         />
+        {/* Gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/50" />
       </div>
 
       {/* Animated gradient orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/30 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/25 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-primary/20 to-accent/20 rounded-full blur-3xl animate-pulse delay-500" />
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-8">
@@ -58,7 +61,7 @@ const Hero = () => {
 
           {/* Streaming Quality Badge */}
           <div className="flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-100">
-            <Badge variant="secondary" className="text-sm md:text-base px-4 py-2 bg-primary/20 border-primary/30 text-primary-foreground">
+            <Badge variant="secondary" className="text-sm md:text-base px-4 py-2 bg-gradient-to-r from-primary/30 to-accent/30 border-primary/40 text-white backdrop-blur-sm">
               Streaming de Alta Qualidade
             </Badge>
           </div>
@@ -90,7 +93,7 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-400">
             <Button 
               size="lg" 
-              className="bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all duration-300 text-lg px-8"
+              className="bg-gradient-to-r from-primary via-accent to-primary hover:shadow-lg hover:shadow-primary/40 transition-all duration-300 text-lg px-8 text-white font-semibold"
               onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Começar Agora
@@ -98,7 +101,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               variant="outline" 
-              className="border-primary/50 hover:bg-primary/10 text-lg px-8"
+              className="border-white/30 hover:bg-white/10 hover:border-white/50 text-lg px-8 text-white backdrop-blur-sm"
               onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Ver Planos
