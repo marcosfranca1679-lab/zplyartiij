@@ -23,7 +23,7 @@ export type Database = {
           has_loyalty: boolean
           id: string
           name: string
-          password: string | null
+          password_hash: string | null
           phone: string
           registration_date: string
           subscription_type: string
@@ -37,7 +37,7 @@ export type Database = {
           has_loyalty?: boolean
           id?: string
           name: string
-          password?: string | null
+          password_hash?: string | null
           phone: string
           registration_date?: string
           subscription_type: string
@@ -51,7 +51,7 @@ export type Database = {
           has_loyalty?: boolean
           id?: string
           name?: string
-          password?: string | null
+          password_hash?: string | null
           phone?: string
           registration_date?: string
           subscription_type?: string

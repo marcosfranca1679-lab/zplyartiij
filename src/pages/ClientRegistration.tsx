@@ -31,7 +31,7 @@ interface Client {
   created_at: string;
   registration_date: string;
   username: string | null;
-  password: string | null;
+  password_hash: string | null;
   has_loyalty: boolean;
 }
 
@@ -118,7 +118,7 @@ const ClientRegistration = () => {
         subscription_type: subscriptionType,
         registration_date: registrationDate,
         username: username.trim() || null,
-        password: password.trim() || null,
+        password_hash: password.trim() || null,
         has_loyalty: hasLoyalty,
         created_by: userId,
       });
@@ -166,7 +166,7 @@ const ClientRegistration = () => {
       subscription_type: client.subscription_type,
       registration_date: client.registration_date,
       username: client.username,
-      password: client.password,
+      password_hash: client.password_hash,
       has_loyalty: client.has_loyalty,
     });
   };
@@ -188,7 +188,7 @@ const ClientRegistration = () => {
           subscription_type: editForm.subscription_type,
           registration_date: editForm.registration_date,
           username: editForm.username?.trim() || null,
-          password: editForm.password?.trim() || null,
+          password_hash: editForm.password_hash?.trim() || null,
           has_loyalty: editForm.has_loyalty,
         })
         .eq("id", clientId);
@@ -283,7 +283,7 @@ Em caso de não pagamento, não será aplicada multa, ocorrendo apenas a suspens
 
 🔐 *Dados de Acesso:*
 👤 Usuário: ${client.username || "Não definido"}
-🔑 Senha: ${client.password || "Não definida"}
+🔑 Senha: ${client.password_hash || "Não definida"}
 
 📋 *Assinatura:* ${subscriptionText}
 📅 *Vencimento:* Todo dia ${registrationDay} de cada ${client.subscription_type === "mensal" ? "mês" : "trimestre"}
@@ -561,8 +561,8 @@ ${loyaltyText}`;
                             </TableCell>
                             <TableCell>
                               <Input
-                                value={editForm.password || ""}
-                                onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
+                                value={editForm.password_hash || ""}
+                                onChange={(e) => setEditForm({ ...editForm, password_hash: e.target.value })}
                                 className="bg-gray-800 border-gray-700 text-white h-8"
                               />
                             </TableCell>
@@ -622,7 +622,7 @@ ${loyaltyText}`;
                             <TableCell className="text-gray-300">{client.email}</TableCell>
                             <TableCell className="text-gray-300">{client.client_code}</TableCell>
                             <TableCell className="text-gray-300">{client.username || "-"}</TableCell>
-                            <TableCell className="text-gray-300">{client.password || "-"}</TableCell>
+                            <TableCell className="text-gray-300">{client.password_hash || "-"}</TableCell>
                             <TableCell className="text-gray-300 capitalize">{client.subscription_type}</TableCell>
                             <TableCell>
                               <span className={`px-2 py-1 rounded text-xs font-medium ${client.has_loyalty ? 'bg-yellow-500/20 text-yellow-400' : 'bg-gray-700 text-gray-400'}`}>
