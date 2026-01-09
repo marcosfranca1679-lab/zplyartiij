@@ -27,9 +27,10 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { planType, couponCode, discountPercent, whatsapp, email } = body;
+    // Removido discountPercent - nunca confiar em valores de desconto do cliente
+    const { planType, couponCode, whatsapp, email } = body;
     
-    console.log('Received payment request:', { planType, couponCode, discountPercent, whatsapp, email, fullBody: body });
+    console.log('Received payment request:', { planType, couponCode, whatsapp, email });
     
     const accessToken = Deno.env.get('MERCADO_PAGO_ACCESS_TOKEN');
 
@@ -60,7 +61,7 @@ serve(async (req) => {
       throw new Error('Plano inválido');
     }
 
-    // Aplicar desconto se houver cupom (validação no servidor)
+    // Aplicar desconto se houver cupom (validação APENAS no servidor - nunca confiar no cliente)
     let finalPrice = plan.price;
     let title = plan.title;
     
@@ -68,38 +69,32 @@ serve(async (req) => {
     const normalizedCoupon = typeof couponCode === 'string' ? couponCode.toUpperCase().trim() : null;
 
     if (planType === 'monthly' && normalizedCoupon) {
-      try {
-        const clientDiscount = Number(discountPercent);
-        if (supabaseUrl && supabaseServiceKey) {
+      // Validação obrigatória no servidor - sem fallback para valores do cliente
+      if (!supabaseUrl || !supabaseServiceKey) {
+        console.error('Missing Supabase credentials - cannot validate coupon securely');
+        // NÃO aplicar desconto se não puder validar no servidor
+        console.log('Cupom ignorado por falta de credenciais do servidor:', { code: normalizedCoupon });
+      } else {
+        try {
           const supabase = createClient(supabaseUrl, supabaseServiceKey);
           const { data: coupon, error: couponError } = await supabase
             .from('coupons')
-            .select('code,is_redeemed')
+            .select('code, discount_percent, is_redeemed')
             .eq('code', normalizedCoupon)
             .eq('is_redeemed', false)
             .single();
 
           if (!couponError && coupon) {
-            appliedDiscount = 30;
-            console.log('Aplicando cupom (server-validated):', { code: normalizedCoupon, discount: appliedDiscount });
+            // Usar desconto do banco de dados, NUNCA do cliente
+            appliedDiscount = coupon.discount_percent || 30;
+            console.log('Cupom válido (server-validated):', { code: normalizedCoupon, discount: appliedDiscount });
           } else {
-            console.log('Cupom inválido ou já utilizado no servidor:', { code: normalizedCoupon, couponError });
-            if (clientDiscount > 0) {
-              appliedDiscount = clientDiscount;
-              console.log('Aplicando cupom (fallback client após falha no servidor):', { code: normalizedCoupon, discount: appliedDiscount });
-            }
+            // Cupom inválido ou já utilizado - NÃO aplicar nenhum desconto
+            console.log('Cupom inválido ou já utilizado - nenhum desconto aplicado:', { code: normalizedCoupon, error: couponError?.message });
           }
-        } else if (clientDiscount > 0) {
-          // Fallback caso variáveis não estejam definidas
-          appliedDiscount = clientDiscount;
-          console.log('Aplicando cupom (fallback client - env ausente):', { code: normalizedCoupon, discount: appliedDiscount });
-        }
-      } catch (e) {
-        console.log('Erro ao validar cupom no servidor, usando fallback se disponível', e);
-        const clientDiscount = Number(discountPercent);
-        if (clientDiscount > 0) {
-          appliedDiscount = clientDiscount;
-          console.log('Aplicando cupom (fallback client - erro):', { code: normalizedCoupon, discount: appliedDiscount });
+        } catch (e) {
+          // Erro na validação - NÃO aplicar desconto por segurança
+          console.error('Erro ao validar cupom no servidor - nenhum desconto aplicado:', e);
         }
       }
     }
