@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tv, Smartphone, Monitor } from "lucide-react";
+import { Tv, Smartphone, Monitor, LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 import SignalQuality from "./SignalQuality";
 import OnlineUsers from "./OnlineUsers";
 import heroImage from "@/assets/hero-iptv.jpg";
@@ -15,6 +16,15 @@ import globoplayLogo from "@/assets/globoplay-logo.png";
 const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 md:pt-20">
+      {/* Login Button - Top Right */}
+      <Link
+        to="/login"
+        className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-500/20"
+      >
+        <LogIn className="w-4 h-4" />
+        <span className="hidden sm:inline">Área Restrita</span>
+      </Link>
+
       {/* Background with gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background z-0">
         <div 
