@@ -74,13 +74,16 @@ export const ClientPaymentsModal = ({ client, open, onOpenChange }: ClientPaymen
     if (!client) return;
 
     const now = new Date();
-    const paymentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    // Usar formato YYYY-MM-DD correto para o mês atual
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const paymentMonthStr = `${year}-${month}-01`;
     const amount = type === "monthly" ? MONTHLY_PRICE : QUARTERLY_PRICE;
 
     try {
       const { error } = await supabase.from("client_payments").insert({
         client_id: client.id,
-        payment_month: paymentMonth.toISOString().split('T')[0],
+        payment_month: paymentMonthStr,
         payment_type: type,
         amount: amount,
         created_by: (await supabase.auth.getUser()).data.user?.id,
@@ -185,7 +188,8 @@ ZPlayer IPTV - Obrigado pela preferência!`;
   };
 
   const formatMonthYear = (dateString: string) => {
-    const date = new Date(dateString);
+    // Adicionar T00:00:00 para evitar problemas de timezone
+    const date = new Date(dateString + 'T00:00:00');
     return format(date, "MMMM 'de' yyyy", { locale: ptBR });
   };
 
@@ -206,22 +210,22 @@ ZPlayer IPTV - Obrigado pela preferência!`;
 
         <div className="space-y-4 flex-1 overflow-auto">
           {/* Botões de Renovação */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
             <Button
               onClick={() => handleRenewal("monthly")}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white flex items-center justify-center gap-2"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Renovar Mensal
-              <span className="ml-1 text-xs opacity-80">(R$ {MONTHLY_PRICE.toFixed(2).replace('.', ',')})</span>
+              <Plus className="h-4 w-4 shrink-0" />
+              <span>Mensal</span>
+              <span className="text-xs opacity-80">(R$ {MONTHLY_PRICE.toFixed(2).replace('.', ',')})</span>
             </Button>
             <Button
               onClick={() => handleRenewal("quarterly")}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Renovar Trimestral
-              <span className="ml-1 text-xs opacity-80">(R$ {QUARTERLY_PRICE.toFixed(2).replace('.', ',')})</span>
+              <Plus className="h-4 w-4 shrink-0" />
+              <span>Trimestral</span>
+              <span className="text-xs opacity-80">(R$ {QUARTERLY_PRICE.toFixed(2).replace('.', ',')})</span>
             </Button>
           </div>
 
