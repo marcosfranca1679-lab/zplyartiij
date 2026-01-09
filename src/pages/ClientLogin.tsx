@@ -32,8 +32,20 @@ const ClientLogin = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const ALLOWED_EMAIL = "williamsouzafranza@gmail.com";
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (email.trim().toLowerCase() !== ALLOWED_EMAIL) {
+      toast({
+        title: "Acesso negado",
+        description: "Este email não tem permissão para acessar",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -69,6 +81,16 @@ const ClientLogin = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (email.trim().toLowerCase() !== ALLOWED_EMAIL) {
+      toast({
+        title: "Acesso negado",
+        description: "Este email não tem permissão para criar conta",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setLoading(true);
 
     try {
