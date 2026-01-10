@@ -279,7 +279,7 @@ export const ClientPaymentsModal = ({ client, open, onOpenChange }: ClientPaymen
       ctx.fillText(label, 65, yPos);
       ctx.fillStyle = '#ffffff';
       ctx.font = '15px system-ui, -apple-system, sans-serif';
-      ctx.fillText(value, 170, yPos);
+      ctx.fillText(value, 185, yPos);
     };
 
     drawInfoRow('Nome:', client.name, y);
