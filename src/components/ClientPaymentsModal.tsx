@@ -149,6 +149,18 @@ export const ClientPaymentsModal = ({ client, open, onOpenChange }: ClientPaymen
     const monthName = format(paymentDate, "MMMM 'de' yyyy", { locale: ptBR });
     const paidAtFormatted = format(paymentDate, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
 
+    // Load logo image
+    const logo = document.createElement('img') as HTMLImageElement;
+    logo.crossOrigin = 'anonymous';
+    
+    const logoLoaded = new Promise<void>((resolve) => {
+      logo.onload = () => resolve();
+      logo.onerror = () => resolve(); // Continue even if logo fails
+      logo.src = '/zplayer-logo-new.png';
+    });
+
+    await logoLoaded;
+
     // Create canvas
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -163,126 +175,208 @@ export const ClientPaymentsModal = ({ client, open, onOpenChange }: ClientPaymen
     }
 
     // Set canvas size
-    canvas.width = 600;
-    canvas.height = 700;
+    canvas.width = 650;
+    canvas.height = 850;
 
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    gradient.addColorStop(0, '#1a1a2e');
-    gradient.addColorStop(1, '#16213e');
-    ctx.fillStyle = gradient;
+    // Premium background with subtle pattern
+    const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    bgGradient.addColorStop(0, '#0f0f1a');
+    bgGradient.addColorStop(0.5, '#1a1a2e');
+    bgGradient.addColorStop(1, '#0f0f1a');
+    ctx.fillStyle = bgGradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Top accent bar
-    const accentGradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-    accentGradient.addColorStop(0, '#dc2626');
-    accentGradient.addColorStop(1, '#ef4444');
-    ctx.fillStyle = accentGradient;
-    ctx.fillRect(0, 0, canvas.width, 8);
-
-    // Header
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 28px Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('📺 ZPlayer IPTV', canvas.width / 2, 60);
-
-    ctx.font = '16px Arial, sans-serif';
-    ctx.fillStyle = '#9ca3af';
-    ctx.fillText('COMPROVANTE DE PAGAMENTO', canvas.width / 2, 90);
-
-    // Divider
-    ctx.strokeStyle = '#374151';
-    ctx.lineWidth = 1;
+    // Decorative corner accents
+    ctx.fillStyle = 'rgba(220, 38, 38, 0.08)';
     ctx.beginPath();
-    ctx.moveTo(40, 115);
-    ctx.lineTo(canvas.width - 40, 115);
+    ctx.arc(0, 0, 200, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(canvas.width, canvas.height, 250, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Top accent bar with gradient
+    const accentGradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+    accentGradient.addColorStop(0, '#b91c1c');
+    accentGradient.addColorStop(0.5, '#dc2626');
+    accentGradient.addColorStop(1, '#b91c1c');
+    ctx.fillStyle = accentGradient;
+    ctx.fillRect(0, 0, canvas.width, 6);
+
+    // Logo and header area
+    let headerY = 50;
+    
+    if (logo.complete && logo.naturalWidth > 0) {
+      const logoSize = 80;
+      const logoX = (canvas.width - logoSize) / 2;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(logoX + logoSize/2, headerY + logoSize/2, logoSize/2 + 4, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(220, 38, 38, 0.3)';
+      ctx.fill();
+      ctx.restore();
+      
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(logoX + logoSize/2, headerY + logoSize/2, logoSize/2, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(logo, logoX, headerY, logoSize, logoSize);
+      ctx.restore();
+      headerY += logoSize + 20;
+    }
+
+    // Company name
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 32px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('ZPlayer IPTV', canvas.width / 2, headerY + 25);
+
+    // Subtitle
+    ctx.font = '600 14px system-ui, -apple-system, sans-serif';
+    ctx.fillStyle = '#dc2626';
+    ctx.letterSpacing = '4px';
+    ctx.fillText('COMPROVANTE DE PAGAMENTO', canvas.width / 2, headerY + 55);
+
+    // Elegant divider
+    const dividerY = headerY + 80;
+    const dividerGradient = ctx.createLinearGradient(60, 0, canvas.width - 60, 0);
+    dividerGradient.addColorStop(0, 'rgba(220, 38, 38, 0)');
+    dividerGradient.addColorStop(0.5, 'rgba(220, 38, 38, 0.6)');
+    dividerGradient.addColorStop(1, 'rgba(220, 38, 38, 0)');
+    ctx.strokeStyle = dividerGradient;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(60, dividerY);
+    ctx.lineTo(canvas.width - 60, dividerY);
+    ctx.stroke();
+
+    // Content card background
+    const cardY = dividerY + 25;
+    const cardHeight = 480;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+    ctx.beginPath();
+    ctx.roundRect(40, cardY, canvas.width - 80, cardHeight, 16);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    ctx.lineWidth = 1;
     ctx.stroke();
 
     // Client Info Section
+    let y = cardY + 40;
     ctx.textAlign = 'left';
-    ctx.font = 'bold 14px Arial, sans-serif';
+    ctx.font = 'bold 12px system-ui, -apple-system, sans-serif';
     ctx.fillStyle = '#dc2626';
-    ctx.fillText('DADOS DO CLIENTE', 40, 150);
+    ctx.fillText('DADOS DO CLIENTE', 65, y);
 
-    ctx.font = '15px Arial, sans-serif';
-    ctx.fillStyle = '#e5e7eb';
-    
-    let y = 180;
-    const lineHeight = 30;
-
-    ctx.fillText(`👤  Nome: ${client.name}`, 40, y);
-    y += lineHeight;
-    ctx.fillText(`📞  Telefone: ${client.phone}`, 40, y);
-    y += lineHeight;
-    ctx.fillText(`📧  Email: ${client.email}`, 40, y);
-    y += lineHeight;
-    ctx.fillText(`🔢  Código: ${client.client_code}`, 40, y);
-
-    // Divider
     y += 30;
-    ctx.strokeStyle = '#374151';
+    ctx.font = '15px system-ui, -apple-system, sans-serif';
+    ctx.fillStyle = '#e5e7eb';
+    const lineHeight = 32;
+
+    const drawInfoRow = (label: string, value: string, yPos: number) => {
+      ctx.fillStyle = '#9ca3af';
+      ctx.font = '13px system-ui, -apple-system, sans-serif';
+      ctx.fillText(label, 65, yPos);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '15px system-ui, -apple-system, sans-serif';
+      ctx.fillText(value, 170, yPos);
+    };
+
+    drawInfoRow('Nome:', client.name, y);
+    y += lineHeight;
+    drawInfoRow('Telefone:', client.phone, y);
+    y += lineHeight;
+    drawInfoRow('Email:', client.email, y);
+    y += lineHeight;
+    drawInfoRow('Código:', client.client_code, y);
+
+    // Section divider
+    y += 35;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(40, y);
-    ctx.lineTo(canvas.width - 40, y);
+    ctx.moveTo(65, y);
+    ctx.lineTo(canvas.width - 65, y);
     ctx.stroke();
 
     // Payment Details Section
     y += 35;
-    ctx.font = 'bold 14px Arial, sans-serif';
+    ctx.font = 'bold 12px system-ui, -apple-system, sans-serif';
     ctx.fillStyle = '#dc2626';
-    ctx.fillText('DETALHES DO PAGAMENTO', 40, y);
+    ctx.fillText('DETALHES DO PAGAMENTO', 65, y);
 
     y += 30;
-    ctx.font = '15px Arial, sans-serif';
-    ctx.fillStyle = '#e5e7eb';
-
-    ctx.fillText(`📅  Mês Referência: ${monthName.charAt(0).toUpperCase() + monthName.slice(1)}`, 40, y);
+    drawInfoRow('Referência:', monthName.charAt(0).toUpperCase() + monthName.slice(1), y);
     y += lineHeight;
-    ctx.fillText(`📋  Tipo: ${payment.payment_type === "monthly" ? "Mensal" : "Trimestral"}`, 40, y);
+    drawInfoRow('Tipo:', payment.payment_type === "monthly" ? "Plano Mensal" : "Plano Trimestral", y);
     y += lineHeight;
+    drawInfoRow('Data Pgto:', paidAtFormatted, y);
 
-    // Amount highlight box
-    y += 10;
-    ctx.fillStyle = 'rgba(34, 197, 94, 0.15)';
-    ctx.fillRect(40, y - 25, canvas.width - 80, 45);
+    // Amount highlight box - Premium style
+    y += 45;
+    const amountBoxGradient = ctx.createLinearGradient(65, y - 20, 65, y + 50);
+    amountBoxGradient.addColorStop(0, 'rgba(34, 197, 94, 0.15)');
+    amountBoxGradient.addColorStop(1, 'rgba(34, 197, 94, 0.05)');
+    ctx.fillStyle = amountBoxGradient;
+    ctx.beginPath();
+    ctx.roundRect(65, y - 20, canvas.width - 130, 70, 12);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(34, 197, 94, 0.4)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.font = '14px system-ui, -apple-system, sans-serif';
+    ctx.fillStyle = '#9ca3af';
+    ctx.textAlign = 'center';
+    ctx.fillText('VALOR PAGO', canvas.width / 2, y + 5);
+
+    ctx.font = 'bold 28px system-ui, -apple-system, sans-serif';
+    ctx.fillStyle = '#22c55e';
+    ctx.fillText(`R$ ${payment.amount.toFixed(2).replace('.', ',')}`, canvas.width / 2, y + 38);
+
+    // Status badge - Premium style
+    y += 100;
+    const badgeWidth = 200;
+    const badgeX = (canvas.width - badgeWidth) / 2;
+    
+    // Badge glow effect
+    ctx.shadowColor = 'rgba(34, 197, 94, 0.5)';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = 'rgba(34, 197, 94, 0.2)';
+    ctx.beginPath();
+    ctx.roundRect(badgeX, y - 20, badgeWidth, 50, 25);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    
     ctx.strokeStyle = '#22c55e';
     ctx.lineWidth = 2;
-    ctx.strokeRect(40, y - 25, canvas.width - 80, 45);
+    ctx.stroke();
 
-    ctx.font = 'bold 22px Arial, sans-serif';
+    ctx.font = 'bold 20px system-ui, -apple-system, sans-serif';
     ctx.fillStyle = '#22c55e';
-    ctx.textAlign = 'center';
-    ctx.fillText(`💰 R$ ${payment.amount.toFixed(2).replace('.', ',')}`, canvas.width / 2, y + 5);
-
-    ctx.textAlign = 'left';
-    y += 55;
-    ctx.font = '15px Arial, sans-serif';
-    ctx.fillStyle = '#e5e7eb';
-    ctx.fillText(`🕐  Pago em: ${paidAtFormatted}`, 40, y);
-
-    // Status badge
-    y += 50;
-    ctx.fillStyle = 'rgba(34, 197, 94, 0.2)';
-    const badgeWidth = 180;
-    const badgeX = (canvas.width - badgeWidth) / 2;
-    ctx.beginPath();
-    ctx.roundRect(badgeX, y - 25, badgeWidth, 40, 20);
-    ctx.fill();
-
-    ctx.font = 'bold 18px Arial, sans-serif';
-    ctx.fillStyle = '#22c55e';
-    ctx.textAlign = 'center';
-    ctx.fillText('✅ PAGO', canvas.width / 2, y + 2);
+    ctx.fillText('✓ PAGAMENTO CONFIRMADO', canvas.width / 2, y + 12);
 
     // Footer
+    const footerY = canvas.height - 80;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(60, footerY);
+    ctx.lineTo(canvas.width - 60, footerY);
+    ctx.stroke();
+
     ctx.fillStyle = '#6b7280';
-    ctx.font = '12px Arial, sans-serif';
-    ctx.fillText('ZPlayer IPTV - Obrigado pela preferência!', canvas.width / 2, canvas.height - 50);
+    ctx.font = '13px system-ui, -apple-system, sans-serif';
+    ctx.fillText('Obrigado por escolher a ZPlayer IPTV!', canvas.width / 2, footerY + 30);
 
     const now = new Date();
     ctx.fillStyle = '#4b5563';
-    ctx.font = '10px Arial, sans-serif';
-    ctx.fillText(`Gerado em ${format(now, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`, canvas.width / 2, canvas.height - 30);
+    ctx.font = '11px system-ui, -apple-system, sans-serif';
+    ctx.fillText(`Comprovante gerado em ${format(now, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`, canvas.width / 2, footerY + 52);
+
+    // Bottom accent bar
+    ctx.fillStyle = accentGradient;
+    ctx.fillRect(0, canvas.height - 6, canvas.width, 6);
 
     // Convert to blob and share/download
     canvas.toBlob(async (blob) => {
