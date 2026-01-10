@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check, Share2, Lock, UserCircle, Shield, CreditCard, Users, Search, RefreshCw } from "lucide-react";
+import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check, Share2, Lock, UserCircle, Shield, CreditCard, Users, Search, RefreshCw, FileText } from "lucide-react";
+import jsPDF from "jspdf";
 import { ClientPaymentsModal } from "@/components/ClientPaymentsModal";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -322,6 +323,164 @@ ${loyaltyText}`;
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
+  };
+
+  const handleGenerateContract = (client: Client) => {
+    const pdf = new jsPDF();
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 20;
+    const contentWidth = pageWidth - margin * 2;
+    let y = 20;
+
+    // Header
+    pdf.setFontSize(20);
+    pdf.setFont("helvetica", "bold");
+    pdf.setTextColor(220, 38, 38);
+    pdf.text("ZPlayer IPTV", pageWidth / 2, y, { align: "center" });
+    
+    y += 10;
+    pdf.setFontSize(14);
+    pdf.setTextColor(0, 0, 0);
+    pdf.text("TERMO DE ASSINATURA", pageWidth / 2, y, { align: "center" });
+
+    // Line separator
+    y += 8;
+    pdf.setDrawColor(220, 38, 38);
+    pdf.setLineWidth(0.5);
+    pdf.line(margin, y, pageWidth - margin, y);
+
+    // Client Data Section
+    y += 15;
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "bold");
+    pdf.text("DADOS DO CONTRATANTE", margin, y);
+
+    y += 10;
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(10);
+    
+    const registrationDay = new Date(client.registration_date).getDate();
+    const subscriptionText = client.subscription_type === "mensal" ? "Mensal" : "Trimestral";
+    const formattedDate = new Date(client.registration_date).toLocaleDateString("pt-BR");
+    
+    const clientData = [
+      `Nome: ${client.name}`,
+      `Telefone: ${client.phone}`,
+      `E-mail: ${client.email}`,
+      `Código do Cliente: ${client.client_code}`,
+      `Usuário IPTV: ${client.username || "Não definido"}`,
+      `Senha IPTV: ${client.password_hash || "Não definida"}`,
+      `Plano: ${subscriptionText}`,
+      `Data de Cadastro: ${formattedDate}`,
+      `Vencimento: Todo dia ${registrationDay} de cada ${client.subscription_type === "mensal" ? "mês" : "trimestre"}`,
+      `Fidelidade: ${client.has_loyalty ? "Com Fidelidade (12 meses)" : "Sem Fidelidade"}`,
+    ];
+
+    clientData.forEach((line) => {
+      pdf.text(line, margin, y);
+      y += 6;
+    });
+
+    // Separator
+    y += 5;
+    pdf.setDrawColor(200, 200, 200);
+    pdf.setLineWidth(0.3);
+    pdf.line(margin, y, pageWidth - margin, y);
+
+    // Guidelines Section
+    y += 10;
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(12);
+    pdf.text("DIRETRIZES DE ASSINATURA", margin, y);
+
+    y += 10;
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(9);
+
+    const guidelines = [
+      { title: "1. Tipos de Planos", content: "A assinatura está disponível em dois tipos de planos:\n• Plano Mensal: válido por 30 (trinta) dias;\n• Plano Trimestral: válido por 3 (três) meses.\nO pagamento deve ser realizado dentro do prazo estipulado. O não pagamento resultará no corte imediato do sinal, sem necessidade de aviso prévio." },
+      { title: "2. Benefícios da Assinatura", content: "Ao contratar qualquer um dos planos disponíveis, o assinante terá direito a:\n• Filmes e séries disponíveis 24 horas por dia;\n• Canais adultos, mediante solicitação do assinante;\n• Canais abertos com funcionamento 24 horas;\n• Todos os serviços oferecidos por valor fixo, conforme o plano escolhido." },
+      { title: "3. Fidelidade", content: "Ao optar por um plano com fidelidade, o assinante compromete-se a permanecer com o plano contratado pelo período mínimo de 30 (trinta) dias.\nO não pagamento durante o período de fidelidade acarretará multa contratual no valor total de R$ 230,00, calculada proporcionalmente em R$ 19,00 (dezenove reais) por mês não cumprido." },
+      { title: "4. Cancelamento da Fidelidade", content: "O cancelamento do plano com fidelidade ocorrerá sem aplicação de multa somente nos casos em que a operadora deixar de fornecer o sinal, de forma definitiva ou por período prolongado que inviabilize a utilização do serviço.\nEm qualquer outra hipótese, o cancelamento antecipado durante o período de fidelidade implicará na cobrança da multa contratual, conforme os valores estabelecidos neste termo." },
+      { title: "5. Requisitos Técnicos", content: "• O serviço funciona 100% via internet;\n• Antes da ativação do serviço, será realizado um teste de conexão, com registro da velocidade pelo vendedor responsável;\n• Para a contratação da assinatura, é obrigatória uma velocidade mínima de 10 Mbps (megabits por segundo)." },
+    ];
+
+    guidelines.forEach((section) => {
+      // Check if we need a new page
+      if (y > 250) {
+        pdf.addPage();
+        y = 20;
+      }
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(10);
+      pdf.text(section.title, margin, y);
+      y += 6;
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(9);
+      const lines = pdf.splitTextToSize(section.content, contentWidth);
+      lines.forEach((line: string) => {
+        if (y > 280) {
+          pdf.addPage();
+          y = 20;
+        }
+        pdf.text(line, margin, y);
+        y += 5;
+      });
+      y += 5;
+    });
+
+    // Acceptance Section
+    if (y > 240) {
+      pdf.addPage();
+      y = 20;
+    }
+
+    y += 10;
+    pdf.setDrawColor(200, 200, 200);
+    pdf.setLineWidth(0.3);
+    pdf.line(margin, y, pageWidth - margin, y);
+
+    y += 10;
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(11);
+    pdf.text("ACEITE DOS TERMOS", margin, y);
+
+    y += 8;
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(9);
+    const acceptanceText = `Eu, ${client.name}, portador(a) do contato ${client.phone}, declaro que li e compreendi todas as cláusulas contidas neste Termo de Assinatura e aceito integralmente as condições estabelecidas para a contratação do plano ${subscriptionText}${client.has_loyalty ? " com fidelidade de 12 meses" : " sem fidelidade"}.`;
+    const acceptanceLines = pdf.splitTextToSize(acceptanceText, contentWidth);
+    acceptanceLines.forEach((line: string) => {
+      pdf.text(line, margin, y);
+      y += 5;
+    });
+
+    y += 15;
+    pdf.text(`Data: ${new Date().toLocaleDateString("pt-BR")}`, margin, y);
+
+    y += 20;
+    pdf.setDrawColor(0, 0, 0);
+    pdf.setLineWidth(0.5);
+    pdf.line(margin, y, margin + 80, y);
+    y += 5;
+    pdf.setFontSize(8);
+    pdf.text("Assinatura do Contratante", margin, y);
+
+    // Footer
+    const footerY = pdf.internal.pageSize.getHeight() - 15;
+    pdf.setFontSize(8);
+    pdf.setTextColor(128, 128, 128);
+    pdf.text("ZPlayer IPTV - Documento gerado automaticamente", pageWidth / 2, footerY, { align: "center" });
+
+    // Save the PDF
+    pdf.save(`Contrato_${client.name.replace(/\s+/g, "_")}_${client.client_code}.pdf`);
+
+    toast({
+      title: "PDF gerado!",
+      description: "O contrato foi baixado com sucesso",
+    });
   };
 
   const getVencimentoInfo = (client: Client) => {
@@ -834,6 +993,15 @@ ${loyaltyText}`;
                             </TableCell>
                             <TableCell>
                               <div className="flex justify-end gap-1">
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={() => handleGenerateContract(client)}
+                                  className="h-8 w-8 text-purple-500 hover:text-purple-400 hover:bg-purple-500/10"
+                                  title="Gerar Contrato PDF"
+                                >
+                                  <FileText className="h-4 w-4" />
+                                </Button>
                                 <Button
                                   size="icon"
                                   variant="ghost"
