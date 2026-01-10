@@ -149,9 +149,11 @@ const Testimonials = () => {
           <div className="relative rounded-xl overflow-hidden shadow-glow border border-primary/20" style={{ paddingBottom: '56.25%' }}>
             <iframe
               className="absolute top-0 left-0 w-full h-full"
-              src="https://www.youtube.com/embed/JL1B_W3fCiw"
+              src="https://www.youtube.com/embed/JL1B_W3fCiw?rel=0"
               title="DICAS PARA TRAVAMENTO"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
             />
           </div>
