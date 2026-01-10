@@ -336,25 +336,36 @@ export const ClientPaymentsModal = ({ client, open, onOpenChange }: ClientPaymen
 
     // Status badge - Premium style
     y += 100;
-    const badgeWidth = 200;
+    const badgeText = '✓ PAGAMENTO CONFIRMADO';
+    ctx.font = 'bold 18px system-ui, -apple-system, sans-serif';
+    const badgeTextWidth = ctx.measureText(badgeText).width;
+    const badgePadding = 40;
+    const badgeWidth = badgeTextWidth + badgePadding;
+    const badgeHeight = 44;
     const badgeX = (canvas.width - badgeWidth) / 2;
+    const badgeY = y - badgeHeight / 2;
     
     // Badge glow effect
     ctx.shadowColor = 'rgba(34, 197, 94, 0.5)';
     ctx.shadowBlur = 20;
-    ctx.fillStyle = 'rgba(34, 197, 94, 0.2)';
+    ctx.fillStyle = 'rgba(34, 197, 94, 0.15)';
     ctx.beginPath();
-    ctx.roundRect(badgeX, y - 20, badgeWidth, 50, 25);
+    ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, badgeHeight / 2);
     ctx.fill();
     ctx.shadowBlur = 0;
     
+    // Badge border
     ctx.strokeStyle = '#22c55e';
     ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, badgeHeight / 2);
     ctx.stroke();
 
-    ctx.font = 'bold 20px system-ui, -apple-system, sans-serif';
+    // Badge text - centered
     ctx.fillStyle = '#22c55e';
-    ctx.fillText('✓ PAGAMENTO CONFIRMADO', canvas.width / 2, y + 12);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(badgeText, canvas.width / 2, y);
 
     // Footer
     const footerY = canvas.height - 80;
