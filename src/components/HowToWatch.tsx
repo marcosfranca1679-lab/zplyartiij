@@ -37,9 +37,11 @@ const HowToWatch = () => {
           <div className="relative aspect-video w-full rounded-lg overflow-hidden shadow-2xl border border-primary/10">
               <iframe
                 className="w-full h-full"
-                src="https://www.youtube.com/embed/vZKJcEDP_gk"
+                src="https://www.youtube.com/embed/vZKJcEDP_gk?rel=0"
                 title="Como Assistir ZPLAYER"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
               />
             </div>
