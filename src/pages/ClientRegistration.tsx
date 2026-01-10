@@ -400,7 +400,7 @@ ${loyaltyText}`;
     const guidelines = [
       { title: "1. Tipos de Planos", content: "A assinatura está disponível em dois tipos de planos:\n• Plano Mensal: válido por 30 (trinta) dias;\n• Plano Trimestral: válido por 3 (três) meses.\nO pagamento deve ser realizado dentro do prazo estipulado. O não pagamento resultará no corte imediato do sinal, sem necessidade de aviso prévio." },
       { title: "2. Benefícios da Assinatura", content: "Ao contratar qualquer um dos planos disponíveis, o assinante terá direito a:\n• Filmes e séries disponíveis 24 horas por dia;\n• Canais adultos, mediante solicitação do assinante;\n• Canais abertos com funcionamento 24 horas;\n• Todos os serviços oferecidos por valor fixo, conforme o plano escolhido." },
-      { title: "3. Fidelidade", content: "Ao optar por um plano com fidelidade, o assinante compromete-se a permanecer com o plano contratado pelo período mínimo de 30 (trinta) dias.\nO não pagamento durante o período de fidelidade acarretará multa contratual no valor total de R$ 230,00, calculada proporcionalmente em R$ 19,00 (dezenove reais) por mês não cumprido." },
+      { title: "3. Fidelidade", content: "Ao optar por um plano com fidelidade, o assinante compromete-se a permanecer com o plano contratado pelo período mínimo de 12 (doze) meses.\nO não pagamento durante o período de fidelidade acarretará multa contratual no valor total de R$ 230,00, calculada proporcionalmente em R$ 19,00 (dezenove reais) por mês não cumprido." },
       { title: "4. Cancelamento da Fidelidade", content: "O cancelamento do plano com fidelidade ocorrerá sem aplicação de multa somente nos casos em que a operadora deixar de fornecer o sinal, de forma definitiva ou por período prolongado que inviabilize a utilização do serviço.\nEm qualquer outra hipótese, o cancelamento antecipado durante o período de fidelidade implicará na cobrança da multa contratual, conforme os valores estabelecidos neste termo." },
       { title: "5. Requisitos Técnicos", content: "• O serviço funciona 100% via internet;\n• Antes da ativação do serviço, será realizado um teste de conexão, com registro da velocidade pelo vendedor responsável;\n• Para a contratação da assinatura, é obrigatória uma velocidade mínima de 10 Mbps (megabits por segundo)." },
     ];
@@ -429,6 +429,63 @@ ${loyaltyText}`;
         y += 5;
       });
       y += 5;
+    });
+
+    // COMO FUNCIONA O IPTV Section
+    if (y > 220) {
+      pdf.addPage();
+      y = 20;
+    }
+
+    y += 5;
+    pdf.setDrawColor(200, 200, 200);
+    pdf.setLineWidth(0.3);
+    pdf.line(margin, y, pageWidth - margin, y);
+
+    y += 10;
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(12);
+    pdf.text("COMO FUNCIONA O IPTV", margin, y);
+
+    y += 8;
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(9);
+    const iptvIntro = "Um sistema de IPTV (Televisão por Protocolo de Internet) é um método de entrega de conteúdo de TV, como canais ao vivo, filmes e séries, usando a internet em vez de sinais de antena ou cabo, funcionando como um serviço de streaming que permite assistir em diversos dispositivos conectados, oferecendo interatividade e flexibilidade com alta qualidade de imagem e som, especialmente em redes de fibra ótica.";
+    const iptvIntroLines = pdf.splitTextToSize(iptvIntro, contentWidth);
+    iptvIntroLines.forEach((line: string) => {
+      if (y > 280) {
+        pdf.addPage();
+        y = 20;
+      }
+      pdf.text(line, margin, y);
+      y += 5;
+    });
+
+    y += 5;
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(10);
+    pdf.text("Como funciona?", margin, y);
+
+    y += 6;
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(9);
+    const iptvDetails = [
+      "• Transmissão via IP: O conteúdo é enviado pela rede IP, o mesmo protocolo de internet usado para acessar sites e outros serviços de streaming.",
+      "• Redes dedicadas: Muitas vezes, provedores usam redes IP privadas para garantir maior estabilidade e evitar travamentos da internet pública, resultando em melhor performance.",
+      "• Dispositivos: Pode ser acessado em Smart TVs, computadores, tablets, celulares e outros aparelhos com um aplicativo de IPTV ou um aparelho específico (TV Box)."
+    ];
+
+    iptvDetails.forEach((detail) => {
+      const detailLines = pdf.splitTextToSize(detail, contentWidth);
+      detailLines.forEach((line: string) => {
+        if (y > 280) {
+          pdf.addPage();
+          y = 20;
+        }
+        pdf.text(line, margin, y);
+        y += 5;
+      });
+      y += 2;
     });
 
     // Acceptance Section
