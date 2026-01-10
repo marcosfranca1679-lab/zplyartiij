@@ -32,6 +32,7 @@ interface Client {
   username: string | null;
   password_hash: string | null;
   has_loyalty: boolean;
+  observations: string | null;
 }
 
 interface ClientPaymentsModalProps {
@@ -289,6 +290,11 @@ export const ClientPaymentsModal = ({ client, open, onOpenChange }: ClientPaymen
     drawInfoRow('Email:', client.email, y);
     y += lineHeight;
     drawInfoRow('Código:', client.client_code, y);
+    
+    if (client.observations) {
+      y += lineHeight;
+      drawInfoRow('Observação:', client.observations.length > 40 ? client.observations.substring(0, 40) + '...' : client.observations, y);
+    }
 
     // Section divider
     y += 35;
@@ -450,12 +456,14 @@ export const ClientPaymentsModal = ({ client, open, onOpenChange }: ClientPaymen
     const monthName = format(paymentDate, "MMMM 'de' yyyy", { locale: ptBR });
     const paidAtFormatted = format(paymentDate, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
 
+    const observationsText = client.observations ? `\n📝 *Observação:* ${client.observations}` : "";
+
     const receiptText = `📺 *ZPlayer IPTV - Comprovante de Pagamento*
 
 👤 *Cliente:* ${client.name}
 📞 *Telefone:* ${client.phone}
 📧 *Email:* ${client.email}
-🔢 *Código:* ${client.client_code}
+🔢 *Código:* ${client.client_code}${observationsText}
 
 💳 *Detalhes do Pagamento:*
 📅 Mês Referência: ${monthName.charAt(0).toUpperCase() + monthName.slice(1)}

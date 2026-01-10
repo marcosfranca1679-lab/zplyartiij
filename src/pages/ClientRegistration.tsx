@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check, Share2, Lock, UserCircle, Shield, CreditCard, Users, Search, RefreshCw, FileText } from "lucide-react";
+import { User, Phone, Mail, Hash, LogOut, Plus, Calendar, Pencil, Trash2, X, Check, Share2, Lock, UserCircle, Shield, CreditCard, Users, Search, RefreshCw, FileText, MessageSquare } from "lucide-react";
 import jsPDF from "jspdf";
 import { ClientPaymentsModal } from "@/components/ClientPaymentsModal";
 import { Switch } from "@/components/ui/switch";
@@ -36,6 +36,7 @@ interface Client {
   username: string | null;
   password_hash: string | null;
   has_loyalty: boolean;
+  observations: string | null;
 }
 
 const ClientRegistration = () => {
@@ -48,6 +49,7 @@ const ClientRegistration = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [hasLoyalty, setHasLoyalty] = useState(false);
+  const [observations, setObservations] = useState("");
   const [loading, setLoading] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [clients, setClients] = useState<Client[]>([]);
@@ -126,6 +128,7 @@ const ClientRegistration = () => {
         username: username.trim() || null,
         password_hash: password.trim() || null,
         has_loyalty: hasLoyalty,
+        observations: observations.trim() || null,
         created_by: userId,
       });
 
@@ -149,6 +152,7 @@ const ClientRegistration = () => {
         setUsername("");
         setPassword("");
         setHasLoyalty(false);
+        setObservations("");
         fetchClients();
       }
     } catch (error) {
@@ -174,6 +178,7 @@ const ClientRegistration = () => {
       username: client.username,
       password_hash: client.password_hash,
       has_loyalty: client.has_loyalty,
+      observations: client.observations,
     });
   };
 
@@ -196,6 +201,7 @@ const ClientRegistration = () => {
           username: editForm.username?.trim() || null,
           password_hash: editForm.password_hash?.trim() || null,
           has_loyalty: editForm.has_loyalty,
+          observations: editForm.observations?.trim() || null,
         })
         .eq("id", clientId);
 
@@ -280,6 +286,8 @@ A cobrança é realizada de forma mensal ou trimestral, conforme o plano contrat
 
 Em caso de não pagamento, não será aplicada multa, ocorrendo apenas a suspensão (corte) do sinal até a regularização do débito.`;
     
+    const observationsText = client.observations ? `\n📝 *Observações:* ${client.observations}` : "";
+    
     const shareText = `📺 *ZPlayer IPTV*
 
 👤 *Nome:* ${client.name}
@@ -293,7 +301,7 @@ Em caso de não pagamento, não será aplicada multa, ocorrendo apenas a suspens
 
 📋 *Assinatura:* ${subscriptionText}
 📅 *Vencimento:* Todo dia ${registrationDay} de cada ${client.subscription_type === "mensal" ? "mês" : "trimestre"}
-🔒 *Fidelidade:* ${client.has_loyalty ? "Com Fidelidade (12 meses)" : "Sem Fidelidade"}
+🔒 *Fidelidade:* ${client.has_loyalty ? "Com Fidelidade (12 meses)" : "Sem Fidelidade"}${observationsText}
 
 ${loyaltyText}`;
 
@@ -377,6 +385,10 @@ ${loyaltyText}`;
       `Vencimento: Todo dia ${registrationDay} de cada ${client.subscription_type === "mensal" ? "mês" : "trimestre"}`,
       `Fidelidade: ${client.has_loyalty ? "Com Fidelidade (12 meses)" : "Sem Fidelidade"}`,
     ];
+
+    if (client.observations) {
+      clientData.push(`Observações: ${client.observations}`);
+    }
 
     clientData.forEach((line) => {
       pdf.text(line, margin, y);
@@ -803,6 +815,24 @@ ${loyaltyText}`;
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+              </div>
+
+              {/* Observations */}
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-4 flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  Observações
+                </h3>
+                <div className="space-y-2">
+                  <textarea
+                    id="observations"
+                    placeholder="Observações sobre o cliente (opcional)"
+                    value={observations}
+                    onChange={(e) => setObservations(e.target.value)}
+                    className="w-full min-h-[80px] rounded-md border border-border/50 bg-secondary/50 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all resize-none"
+                    rows={3}
+                  />
                 </div>
               </div>
 
