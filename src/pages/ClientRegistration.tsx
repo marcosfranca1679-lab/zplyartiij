@@ -361,6 +361,7 @@ ${loyaltyText}`;
     
     const registrationDay = new Date(client.registration_date).getDate();
     const subscriptionText = client.subscription_type === "mensal" ? "Mensal" : "Trimestral";
+    const planPrice = client.subscription_type === "mensal" ? "R$ 29,99" : "R$ 70,00";
     const formattedDate = new Date(client.registration_date).toLocaleDateString("pt-BR");
     
     const clientData = [
@@ -371,6 +372,7 @@ ${loyaltyText}`;
       `Usuário IPTV: ${client.username || "Não definido"}`,
       `Senha IPTV: ${client.password_hash || "Não definida"}`,
       `Plano: ${subscriptionText}`,
+      `Valor: ${planPrice}`,
       `Data de Cadastro: ${formattedDate}`,
       `Vencimento: Todo dia ${registrationDay} de cada ${client.subscription_type === "mensal" ? "mês" : "trimestre"}`,
       `Fidelidade: ${client.has_loyalty ? "Com Fidelidade (12 meses)" : "Sem Fidelidade"}`,
