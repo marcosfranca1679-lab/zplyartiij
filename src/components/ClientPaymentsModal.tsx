@@ -40,7 +40,7 @@ interface ClientPaymentsModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const MONTHLY_PRICE = 29.90;
+const MONTHLY_PRICE = 29.99;
 const QUARTERLY_PRICE = 70.00;
 
 export const ClientPaymentsModal = ({ client, open, onOpenChange }: ClientPaymentsModalProps) => {
