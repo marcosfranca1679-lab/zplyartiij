@@ -25,7 +25,7 @@ const AdminLogin = () => {
     // Simular delay de autenticação
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    if (email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASSWORD) {
       // Salvar sessão no localStorage
       localStorage.setItem("admin_authenticated", "true");
       localStorage.setItem("admin_email", email);
