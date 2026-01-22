@@ -25,7 +25,7 @@ const ClientLogin = () => {
     // Simular delay de autenticação
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    if (email === CLIENT_EMAIL && password === CLIENT_PASSWORD) {
+    if (email.trim().toLowerCase() === CLIENT_EMAIL.toLowerCase() && password === CLIENT_PASSWORD) {
       localStorage.setItem("client_authenticated", "true");
       localStorage.setItem("client_email", email);
       
