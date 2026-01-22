@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { LogOut, Shield, Users, Ticket, RefreshCw } from "lucide-react";
-import PaymentsTable from "@/components/admin/PaymentsTable";
-import CouponsManager from "@/components/admin/CouponsManager";
 
 const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -19,42 +16,25 @@ const AdminDashboard = () => {
     checkAdminAccess();
   }, []);
 
-  const checkAdminAccess = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (!session) {
-        navigate("/admin");
-        return;
-      }
-
-      const { data: hasAdminRole, error } = await supabase.rpc('has_role', {
-        _user_id: session.user.id,
-        _role: 'admin'
-      });
-
-      if (error || !hasAdminRole) {
-        toast({
-          variant: "destructive",
-          title: "Acesso negado",
-          description: "Você não tem permissão de administrador",
-        });
-        await supabase.auth.signOut();
-        navigate("/admin");
-        return;
-      }
-
-      setIsAdmin(true);
-    } catch (error) {
-      console.error("Error checking admin access:", error);
+  const checkAdminAccess = () => {
+    const isAuthenticated = localStorage.getItem("admin_authenticated") === "true";
+    
+    if (!isAuthenticated) {
       navigate("/admin");
-    } finally {
-      setLoading(false);
+      return;
     }
+
+    setIsAdmin(true);
+    setLoading(false);
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    localStorage.removeItem("admin_authenticated");
+    localStorage.removeItem("admin_email");
+    toast({
+      title: "Logout realizado",
+      description: "Você saiu do painel administrativo",
+    });
     navigate("/admin");
   };
 
@@ -86,42 +66,88 @@ const AdminDashboard = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="payments" className="space-y-6">
+        <Tabs defaultValue="info" className="space-y-6">
           <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="payments" className="flex items-center gap-2">
+            <TabsTrigger value="info" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
-              Pagamentos
+              Informações
             </TabsTrigger>
-            <TabsTrigger value="coupons" className="flex items-center gap-2">
+            <TabsTrigger value="config" className="flex items-center gap-2">
               <Ticket className="w-4 h-4" />
-              Cupons
+              Configurações
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="payments">
+          <TabsContent value="info">
             <Card>
               <CardHeader>
-                <CardTitle>Pagamentos e Assinaturas</CardTitle>
+                <CardTitle>Painel Administrativo</CardTitle>
                 <CardDescription>
-                  Visualize todos os pagamentos e assinaturas realizados
+                  Bem-vindo ao painel de administração do ZPlayer
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <PaymentsTable />
+              <CardContent className="space-y-4">
+                <div className="p-4 bg-muted rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    Este painel está funcionando sem banco de dados. 
+                    Os dados são gerenciados localmente.
+                  </p>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Card className="bg-primary/5 border-primary/20">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg">WhatsApp</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-2xl font-bold text-primary">Ativo</p>
+                      <p className="text-sm text-muted-foreground">
+                        Vendas via WhatsApp configuradas
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-green-500/5 border-green-500/20">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg">Status</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-2xl font-bold text-green-500">Online</p>
+                      <p className="text-sm text-muted-foreground">
+                        Sistema funcionando normalmente
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="coupons">
+          <TabsContent value="config">
             <Card>
               <CardHeader>
-                <CardTitle>Gerenciar Cupons</CardTitle>
+                <CardTitle>Configurações</CardTitle>
                 <CardDescription>
-                  Crie e gerencie cupons de desconto
+                  Gerencie as configurações do sistema
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <CouponsManager />
+                <div className="space-y-4">
+                  <div className="p-4 bg-muted rounded-lg">
+                    <h3 className="font-semibold mb-2">Link do WhatsApp</h3>
+                    <code className="text-sm bg-background px-2 py-1 rounded break-all">
+                      https://wa.me/5548999118524
+                    </code>
+                  </div>
+                  <div className="p-4 bg-muted rounded-lg">
+                    <h3 className="font-semibold mb-2">Credenciais de Acesso</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Email: admin@zplayer.com<br/>
+                      Senha: admin123
+                    </p>
+                    <p className="text-xs text-yellow-500 mt-2">
+                      ⚠️ Altere as credenciais no código para maior segurança
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
