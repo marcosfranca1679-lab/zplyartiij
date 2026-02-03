@@ -15,98 +15,80 @@ const ContentUpdates = () => {
             <ScrollArea className="h-[400px] w-full pr-4">
               <div className="space-y-4 text-xs">
                 <div className="text-center">
-                  <p className="text-primary font-semibold mb-2">🟢 ATUALIZAÇÃO 08/01/2026 🟢</p>
+                  <p className="text-primary font-semibold mb-2">🟢 ATUALIZAÇÃO 03/02/2026 🟢</p>
                 </div>
 
                 <div className="space-y-3">
                   <div>
-                    <h3 className="text-primary font-bold mb-2">📺 NOVOS CANAIS</h3>
-                    <div className="border-t border-primary/20 pt-2 space-y-1 text-muted-foreground">
-                      <p className="text-foreground/90 font-medium">💢 COPINHA 2026 - 04/01/2026</p>
-                      <p>📺 COPINHA 01</p>
-                      <p>📺 COPINHA 02</p>
-                      <p>📺 COPINHA 03</p>
-                      <p>📺 COPINHA 04</p>
-                      <p>📺 COPINHA 05</p>
-                      <p>📺 COPINHA 06</p>
-                      <p>📺 COPINHA 07</p>
-                    </div>
-                  </div>
-
-                  <div>
                     <h3 className="text-primary font-bold mb-2">🎬 NOVOS FILMES</h3>
                     <div className="border-t border-primary/20 pt-2 space-y-1 text-muted-foreground">
-                      <p className="text-foreground/90 font-medium">💢 Filmes | Drama - 04/01/2026</p>
-                      <p>🎥️ Chuva de Chumbo</p>
-                      <p>🎥️ Cidade do Sol</p>
-                      <p>🎥️ A Segunda Guerra Civil</p>
-                      <p>🎥️ Um Crime na Confeitaria</p>
-                      <p>🎥️ Vida Selvagem</p>
-                      <p>🎥️ A Letra Escarlate</p>
-                      <p>🎥️ Freud: Além da Alma</p>
-                      <p>🎥️ Esquentando o Alasca</p>
-                      <p>🎥️ Garota Fantástica</p>
-                      <p>🎥️ Girl Lost - A Garota de Programa</p>
-                      <p>🎥️ O Maníaco do Facebook</p>
-                      <p>🎥️ O Desejo de Saiuri</p>
-                      <p>🎥️ Paulo, Apóstolo de Cristo</p>
-                      <p>🎥️ Vidas Partidas</p>
-                      <p>🎥️ Missão Especial</p>
-                      <p>🎥️ Diário de uma Louca</p>
-                      <p>🎥️ Avenida</p>
-                      <p>🎥️ A Jovem Rainha Vitória</p>
-                      <p>🎥️ Insensata Paixão</p>
-                      <p>🎥️ O Confidente da Rainha</p>
-                      <p>🎥️ Sangue & Chocolate</p>
-                      <p>🎥️ Apenas uma Chance</p>
-                      <p>🎥️ Um Sonho de Amor</p>
-                      <p>🎥️ Ao Mestre, Com Carinho</p>
-                      <p>🎥️ A Última Tentação de Cristo</p>
+                      <p className="text-foreground/90 font-medium">💢 Filmes | Lançamentos - 03/02/2026</p>
+                      <p>🎥️ Americana</p>
+                      <p>🎥️ Um Dia Extraordinário</p>
+                      <p>🎥️ Salvação</p>
+                      <p>🎥️ Palavras de Guerra</p>
+                      <p>🎥️ Palhaçassino</p>
+                      <p>🎥️ Nossa Vizinhança</p>
+                      <p>🎥️ Kyochuu Rettou Movie</p>
+                      <p>🎥️ Davi: Nasce Um Rei</p>
+                      <p>🎥️ Utopia Muda</p>
+                      <p>🎥️ A Natureza das Coisas Invisíveis</p>
+                      <p>🎥️ Dupla Perigosa</p>
+                      <p>🎥️ O Agente Secreto</p>
+                      <p>🎥️ Zona Z</p>
+                      <p>🎥️ Sinfonia de Guerra</p>
+                      <p>🎥️ Cora Bora</p>
+                      <p>🎥️ Christy - Um Novo Round</p>
+                      <p>🎥️ Uma Carta à Minha Juventude</p>
+                      <p>🎥️ Freaky Tales</p>
+                      <p>🎥️ धुरंधर</p>
+                      <p>🎥️ Traição Entre Amigas</p>
+                      <p>🎥️ Entre Nós: Uma Dose Extra de Amor</p>
+                      <p>🎥️ God Complex - O Complexo Industrial da Censura</p>
+                      <p>🎥️ Você Vai Morrer em 6 Horas</p>
+                      <p>🎥️ Zona de Caça</p>
+                      <p>🎥️ Você Radical - Amnésia</p>
                     </div>
                   </div>
 
                   <div>
                     <h3 className="text-primary font-bold mb-2">🍿 NOVAS SÉRIES</h3>
                     <div className="border-t border-primary/20 pt-2 space-y-1 text-muted-foreground">
-                      <p className="text-foreground/90 font-medium">💢 Adicionadas em 08/01/2026</p>
-                      <p>🍿 Stargate Infinity</p>
-                      <p>🍿 Kamen Rider Build</p>
-                      <p>🍿 Dragões A Série</p>
-                      <p>🍿 Digimon Xros Wars</p>
-                      <p>🍿 Bridgerton [L]</p>
-                      <p>🍿 Sentenced to Be a Hero</p>
-                      <p>🍿 Projeto Prometheus</p>
-                      <p>🍿 Merteuil Jogos de Sedução</p>
-                      <p>🍿 Velocidade e Amor</p>
-                      <p>🍿 Se o Destino Quiser</p>
-                      <p>🍿 O Pretendente Perfeito</p>
-                      <p>🍿 Leopard Skin</p>
-                      <p>🍿 Corações Destinados</p>
-                      <p>🍿 Chapolin e Os Colorados</p>
-                      <p>🍿 Cautiva por Amor</p>
-                      <p>🍿 Barbapapa Uma Grande Família</p>
-                      <p>🍿 As Aventuras do Gato de Botas</p>
-                      <p>🍿 All Her Fault</p>
-                      <p>🍿 Manto e Adaga</p>
-                      <p>🍿 Estrada de Sangue</p>
-                      <p>🍿 Digimon Frontier</p>
-                      <p>🍿 Claymore</p>
-                      <p>🍿 Cidade Secreta</p>
-                      <p>🍿 Só para Membros Palm Beach</p>
-                      <p>🍿 Mistletoe Murders</p>
+                      <p className="text-foreground/90 font-medium">💢 Adicionadas em 03/02/2026</p>
+                      <p>🍿 Vanished</p>
+                      <p>🍿 Under Salt Marsh [L]</p>
+                      <p>🍿 This Boy is a Professional Wizard [L]</p>
+                      <p>🍿 The Guilty [L]</p>
+                      <p>🍿 Taiso Samurai [L]</p>
+                      <p>🍿 Misterios da Antiga China [L]</p>
+                      <p>🍿 Love Island Games [L]</p>
+                      <p>🍿 Dona Beja</p>
+                      <p>🍿 Danca no Gelo Rumo ao Ouro</p>
+                      <p>🍿 A Vida dos Santos</p>
+                      <p>🍿 The Inner Eye [L]</p>
+                      <p>🍿 The Rainmaker</p>
+                      <p>🍿 Entre o Inverno e a Primavera [L]</p>
+                      <p>🍿 Ela Caminha Sozinha</p>
+                      <p>🍿 ROLL OVER AND DIE</p>
+                      <p>🍿 Zashiki Warashi no Tatami chan [L]</p>
+                      <p>🍿 Vivendo sem Lacos</p>
+                      <p>🍿 Um dos Garotos [L]</p>
+                      <p>🍿 Mel Brooks The 99 Year Old Man [L]</p>
+                      <p>🍿 Amor Sombrio</p>
+                      <p>🍿 A Jornada da Lenda</p>
+                      <p>🍿 My Sesame Street Friends [L]</p>
+                      <p>🍿 Magnum</p>
+                      <p>🍿 Take That [L]</p>
+                      <p>🍿 PONIES [L]</p>
                     </div>
                   </div>
 
                   <div>
                     <h3 className="text-primary font-bold mb-2">📺 NOVOS EPISÓDIOS</h3>
                     <div className="border-t border-primary/20 pt-2 space-y-1 text-muted-foreground">
-                      <p className="text-foreground/90 font-medium">💢 Digimon Frontier - 07/01/2026</p>
-                      <p>📺 S01 E30 ao E50 (21 Novos Episódios)</p>
-                      
-                      <p className="text-foreground/90 font-medium mt-2">💢 Outras Séries - 07/01/2026</p>
-                      <p>📺 Choque de Cultura A Série S01 E04</p>
-                      <p>📺 Talvez Amanhã S01 E09-E10</p>
-                      <p>📺 Pro Bono S01 E09</p>
+                      <p className="text-foreground/90 font-medium">💢 Adicionados em 03/02/2026</p>
+                      <p>📺 Vanished S01 E01</p>
+                      <p>📺 This Boy is a Professional Wizard [L] S01 E01-E04</p>
                     </div>
                   </div>
                 </div>
