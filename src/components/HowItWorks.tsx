@@ -63,16 +63,21 @@ const HowItWorks = () => {
           })}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
+        <div className="flex flex-col items-center gap-3 mt-12">
           <Button 
             size="lg" 
             className="bg-gradient-to-r from-primary via-accent to-primary hover:shadow-lg hover:shadow-primary/40 transition-all duration-300 text-lg px-8 text-white font-semibold"
             asChild
           >
-            <a href="https://www.mediafire.com/file/gwcypcqyuxfelvw/Z+PLAYER+2.0+ARM+.apk/file" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.mediafire.com/file/8fodetddpzuxhcj/Z_PLAYER_3.0_ATUALIZADO.apk/file" target="_blank" rel="noopener noreferrer">
               BAIXAR APP
             </a>
           </Button>
+          <p className="text-sm font-medium text-muted-foreground text-center">
+            app atualizado dia 22/03/2025
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button 
             size="lg" 
             variant="outline" 
@@ -83,6 +88,7 @@ const HowItWorks = () => {
               SOLICITAR TESTE GRÁTIS
             </a>
           </Button>
+          </div>
         </div>
 
         <div className="mt-16 max-w-4xl mx-auto">
