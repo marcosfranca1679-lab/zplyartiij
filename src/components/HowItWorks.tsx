@@ -74,7 +74,7 @@ const HowItWorks = () => {
             </a>
           </Button>
           <p className="text-sm font-medium text-muted-foreground text-center">
-            app atualizado dia 22/03/2025
+            app atualizado dia 22/03/2026
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
