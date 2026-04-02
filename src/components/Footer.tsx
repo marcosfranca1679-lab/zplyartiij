@@ -1,5 +1,6 @@
 import { Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import autoForgeLogo from "@/assets/logo-autoforge.png";
 
 const Footer = () => {
   return (
@@ -42,6 +43,22 @@ const Footer = () => {
             </Button>
           </a>
           <p className="text-sm text-muted-foreground">&copy; 2025 Z PLAYER. Todos os direitos reservados.</p>
+          <a
+            href="https://autoforge.website"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-primary"
+          >
+            <img
+              src={autoForgeLogo}
+              alt="Logo da AutoForge"
+              loading="lazy"
+              className="h-8 w-auto"
+            />
+            <span>
+              Site criado por <strong className="text-foreground">AutoForge</strong> · autoforge.website
+            </span>
+          </a>
         </div>
       </div>
     </footer>
