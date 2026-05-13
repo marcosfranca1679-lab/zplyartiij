@@ -1,8 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Download, Tv, ShieldCheck, Copy, Check } from "lucide-react";
+import { CreditCard, Download, Tv, ShieldCheck } from "lucide-react";
 import smartIptvLogo from "@/assets/smart-iptv-logo.png";
-import { useState } from "react";
 
 const steps = [
   {
@@ -23,17 +22,6 @@ const steps = [
 ];
 
 const HowItWorks = () => {
-  const [copied, setCopied] = useState(false);
-
-  const copyPassword = async () => {
-    try {
-      await navigator.clipboard.writeText("ZXCI26");
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // fallback silently
-    }
-  };
   return (
     <section className="py-24 px-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/30 to-background" />
@@ -101,22 +89,6 @@ const HowItWorks = () => {
           <p className="text-sm font-medium text-muted-foreground text-center">
             app atualizado dia 13/05/2026
           </p>
-          <button
-            onClick={copyPassword}
-            className="flex items-center gap-2 text-sm font-bold text-primary hover:text-primary/80 transition-colors cursor-pointer"
-          >
-            {copied ? (
-              <>
-                <Check className="w-4 h-4" />
-                <span>Senha copiada!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="w-4 h-4" />
-                <span>Copiar Senha</span>
-              </>
-            )}
-          </button>
           <div className="flex items-center gap-2 text-sm font-medium text-green-500">
             <ShieldCheck className="w-4 h-4" />
             <span>Download seguro e verificado</span>
