@@ -65,16 +65,38 @@ const HowItWorks = () => {
         </div>
 
         <div className="flex flex-col items-center gap-3 mt-12">
-          <Button 
-            size="lg" 
-            className="bg-gradient-to-r from-primary via-accent to-primary hover:shadow-lg hover:shadow-primary/40 transition-all duration-300 text-lg px-8 text-white font-semibold"
-            asChild
-          >
-            <a href="https://www.mediafire.com/folder/oxv4okw79iggx/z+player" target="_blank" rel="noopener noreferrer">
-              BAIXAR APP
-            </a>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button 
+              size="lg" 
+              className="bg-gradient-to-r from-primary via-accent to-primary hover:shadow-lg hover:shadow-primary/40 transition-all duration-300 text-lg px-8 text-white font-semibold"
+              asChild
+            >
+              <a href="https://www.mediafire.com/folder/oxv4okw79iggx/z+player" target="_blank" rel="noopener noreferrer">
+                BAIXAR APP
+              </a>
+            </Button>
+            <Button 
+              size="lg" 
+              className="bg-white hover:bg-white/90 text-black hover:shadow-lg hover:shadow-white/30 transition-all duration-300 text-lg px-8 font-semibold gap-2"
+              asChild
+            >
+              <a href="https://apps.apple.com/br/app/smarters-pro/id6450746159" target="_blank" rel="noopener noreferrer">
+                <img src={smartIptvLogo} alt="Smart IPTV" className="w-6 h-6 rounded" />
+                BAIXAR APP APPLE STORE
+              </a>
+            </Button>
+          </div>
           <p className="text-sm font-medium text-muted-foreground text-center">
+            app atualizado dia 22/03/2026
+          </p>
+          <p className="text-sm font-bold text-primary text-center">
+            Senha: ZXCI26
+          </p>
+          <div className="flex items-center gap-2 text-sm font-medium text-green-500">
+            <ShieldCheck className="w-4 h-4" />
+            <span>Download seguro e verificado</span>
+          </div>
+
             app atualizado dia 22/03/2026
           </p>
           <p className="text-sm font-bold text-primary text-center">
