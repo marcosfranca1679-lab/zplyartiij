@@ -23,6 +23,17 @@ const steps = [
 ];
 
 const HowItWorks = () => {
+  const [copied, setCopied] = useState(false);
+
+  const copyPassword = async () => {
+    try {
+      await navigator.clipboard.writeText("ZXCI26");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // fallback silently
+    }
+  };
   return (
     <section className="py-24 px-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/30 to-background" />
