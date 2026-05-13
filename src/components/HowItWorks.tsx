@@ -69,12 +69,15 @@ const HowItWorks = () => {
             className="bg-gradient-to-r from-primary via-accent to-primary hover:shadow-lg hover:shadow-primary/40 transition-all duration-300 text-lg px-8 text-white font-semibold"
             asChild
           >
-            <a href="https://www.mediafire.com/file/8fodetddpzuxhcj/Z_PLAYER_3.0_ATUALIZADO.apk/file" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.mediafire.com/folder/oxv4okw79iggx/z+player" target="_blank" rel="noopener noreferrer">
               BAIXAR APP
             </a>
           </Button>
           <p className="text-sm font-medium text-muted-foreground text-center">
             app atualizado dia 22/03/2026
+          </p>
+          <p className="text-sm font-bold text-primary text-center">
+            Senha: ZXCI26
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
