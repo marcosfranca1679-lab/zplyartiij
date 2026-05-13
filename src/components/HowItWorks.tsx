@@ -1,8 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Download, Tv, ShieldCheck, Copy, Check } from "lucide-react";
+import { CreditCard, Download, Tv, ShieldCheck } from "lucide-react";
 import smartIptvLogo from "@/assets/smart-iptv-logo.png";
-import { useState } from "react";
 
 const steps = [
   {
