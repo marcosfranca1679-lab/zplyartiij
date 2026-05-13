@@ -97,11 +97,6 @@ const HowItWorks = () => {
             <span>Download seguro e verificado</span>
           </div>
 
-            app atualizado dia 22/03/2026
-          </p>
-          <p className="text-sm font-bold text-primary text-center">
-            Senha: ZXCI26
-          </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button 
