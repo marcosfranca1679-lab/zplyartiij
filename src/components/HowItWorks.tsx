@@ -84,7 +84,7 @@ const HowItWorks = () => {
               asChild
             >
               <a href="https://www.mediafire.com/folder/oxv4okw79iggx/z+player" target="_blank" rel="noopener noreferrer">
-                BAIXAR APP
+                BAIXAR APP (ANDROID & SMART TV)
               </a>
             </Button>
             <Button 
