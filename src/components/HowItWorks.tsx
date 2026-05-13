@@ -89,22 +89,6 @@ const HowItWorks = () => {
           <p className="text-sm font-medium text-muted-foreground text-center">
             app atualizado dia 13/05/2026
           </p>
-          <button
-            onClick={copyPassword}
-            className="flex items-center gap-2 text-sm font-bold text-primary hover:text-primary/80 transition-colors cursor-pointer"
-          >
-            {copied ? (
-              <>
-                <Check className="w-4 h-4" />
-                <span>Senha copiada!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="w-4 h-4" />
-                <span>Copiar Senha</span>
-              </>
-            )}
-          </button>
           <div className="flex items-center gap-2 text-sm font-medium text-green-500">
             <ShieldCheck className="w-4 h-4" />
             <span>Download seguro e verificado</span>
